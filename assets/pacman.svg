@@ -1,858 +1,1683 @@
 
 <svg
     width="1200"
-    height="460"
-    viewBox="0 0 1200 460"
+    height="470"
+    viewBox="0 0 1200 470"
     xmlns="http://www.w3.org/2000/svg"
 >
 
+    <defs>
+
+        <filter
+            id="blueGlow"
+            x="-30%"
+            y="-30%"
+            width="160%"
+            height="160%"
+        >
+
+            <feGaussianBlur
+                stdDeviation="2"
+                result="blur"
+            />
+
+            <feMerge>
+
+                <feMergeNode
+                    in="blur"
+                />
+
+                <feMergeNode
+                    in="SourceGraphic"
+                />
+
+            </feMerge>
+
+        </filter>
+
+
+        <filter
+            id="yellowGlow"
+            x="-30%"
+            y="-30%"
+            width="160%"
+            height="160%"
+        >
+
+            <feGaussianBlur
+                stdDeviation="2.5"
+                result="blur"
+            />
+
+            <feMerge>
+
+                <feMergeNode
+                    in="blur"
+                />
+
+                <feMergeNode
+                    in="SourceGraphic"
+                />
+
+            </feMerge>
+
+        </filter>
+
+    </defs>
+
+
+    <!-- FUNDO -->
+
     <rect
         width="1200"
-        height="460"
-        rx="18"
+        height="470"
+        rx="20"
         fill="#05070c"
     />
 
 
+    <!-- ================================================= -->
     <!-- SCORE -->
+    <!-- ================================================= -->
 
     <text
         x="65"
-        y="50"
+        y="55"
         fill="#ffffff"
-        font-family="monospace"
-        font-size="20"
-        font-weight="bold"
+        font-family="'Courier New', monospace"
+        font-size="24"
+        font-weight="700"
     >
         SCORE
     </text>
 
+
     <text
-        x="155"
-        y="50"
+        x="165"
+        y="55"
         fill="#ffe500"
-        font-family="monospace"
-        font-size="20"
-        font-weight="bold"
+        font-family="'Courier New', monospace"
+        font-size="24"
+        font-weight="700"
     >
         007950
     </text>
 
 
+    <!-- ================================================= -->
     <!-- HIGH SCORE -->
+    <!-- ================================================= -->
 
     <text
-        x="460"
-        y="50"
+        x="465"
+        y="55"
         fill="#ffffff"
-        font-family="monospace"
-        font-size="18"
-        font-weight="bold"
+        font-family="'Courier New', monospace"
+        font-size="20"
+        font-weight="700"
     >
         HIGH SCORE
     </text>
 
+
     <text
-        x="600"
-        y="50"
+        x="610"
+        y="55"
         fill="#ffe500"
-        font-family="monospace"
-        font-size="18"
-        font-weight="bold"
+        font-family="'Courier New', monospace"
+        font-size="20"
+        font-weight="700"
     >
         012340
     </text>
 
 
-    <!-- LIVES -->
+    <!-- ================================================= -->
+    <!-- VIDAS -->
+    <!-- ================================================= -->
 
     <text
-        x="950"
-        y="50"
+        x="940"
+        y="55"
         fill="#ffffff"
-        font-family="monospace"
-        font-size="20"
-        font-weight="bold"
+        font-family="'Courier New', monospace"
+        font-size="24"
+        font-weight="700"
     >
         LIVES
     </text>
 
-    <g fill="#ffe329">
 
-        <path d="
-            M1050 45
-            L1036 36
-            A16 16 0 1 0 1036 54
+    <!-- Vida 1 -->
+
+    <path
+        d="
+            M1050 50
+            L1034 39
+            A18 18 0 1 0 1034 61
             Z
-        "/>
+        "
+        fill="#ffe329"
+    />
 
-        <path d="
-            M1090 45
-            L1076 36
-            A16 16 0 1 0 1076 54
+
+    <!-- Vida 2 -->
+
+    <path
+        d="
+            M1090 50
+            L1074 39
+            A18 18 0 1 0 1074 61
             Z
-        "/>
+        "
+        fill="#ffe329"
+    />
 
-        <path d="
-            M1130 45
-            L1116 36
-            A16 16 0 1 0 1116 54
+
+    <!-- Vida 3 -->
+
+    <path
+        d="
+            M1130 50
+            L1114 39
+            A18 18 0 1 0 1114 61
             Z
-        "/>
+        "
+        fill="#ffe329"
+    />
 
-    </g>
 
-
+    <!-- ================================================= -->
     <!-- LABIRINTO -->
+    <!-- ================================================= -->
 
-    <g>
+    <g filter="url(#blueGlow)">
 
         
     <rect
         x="55"
-        y="90"
+        y="95"
         width="1090"
         height="320"
-        rx="12"
+        rx="14"
         fill="#05070c"
-        stroke="#086fff"
+        stroke="#1267ff"
         stroke-width="7"
+    />
+
+    <rect
+        x="63"
+        y="103"
+        width="1074"
+        height="304"
+        rx="10"
+        fill="none"
+        stroke="#001b70"
+        stroke-width="2"
     />
     
     <rect
-        x="100"
-        y="115"
+        x="130"
+        y="120"
+        width="180"
+        height="48"
+        rx="10"
+        fill="#05070c"
+        stroke="#1267ff"
+        stroke-width="7"
+    />
+
+    <rect
+        x="138"
+        y="128"
+        width="164"
+        height="32"
+        rx="6"
+        fill="none"
+        stroke="#001b70"
+        stroke-width="2"
+    />
+    
+    <rect
+        x="385"
+        y="120"
         width="175"
-        height="47"
-        rx="8"
+        height="48"
+        rx="10"
         fill="#05070c"
-        stroke="#086fff"
+        stroke="#1267ff"
         stroke-width="7"
+    />
+
+    <rect
+        x="393"
+        y="128"
+        width="159"
+        height="32"
+        rx="6"
+        fill="none"
+        stroke="#001b70"
+        stroke-width="2"
     />
     
     <rect
-        x="350"
-        y="115"
+        x="640"
+        y="120"
         width="175"
-        height="47"
-        rx="8"
+        height="48"
+        rx="10"
         fill="#05070c"
-        stroke="#086fff"
+        stroke="#1267ff"
         stroke-width="7"
+    />
+
+    <rect
+        x="648"
+        y="128"
+        width="159"
+        height="32"
+        rx="6"
+        fill="none"
+        stroke="#001b70"
+        stroke-width="2"
     />
     
     <rect
-        x="600"
-        y="115"
-        width="175"
-        height="47"
-        rx="8"
+        x="890"
+        y="120"
+        width="180"
+        height="48"
+        rx="10"
         fill="#05070c"
-        stroke="#086fff"
+        stroke="#1267ff"
         stroke-width="7"
+    />
+
+    <rect
+        x="898"
+        y="128"
+        width="164"
+        height="32"
+        rx="6"
+        fill="none"
+        stroke="#001b70"
+        stroke-width="2"
     />
     
     <rect
-        x="850"
-        y="115"
-        width="175"
-        height="47"
-        rx="8"
+        x="130"
+        y="225"
+        width="180"
+        height="50"
+        rx="10"
         fill="#05070c"
-        stroke="#086fff"
+        stroke="#1267ff"
         stroke-width="7"
+    />
+
+    <rect
+        x="138"
+        y="233"
+        width="164"
+        height="34"
+        rx="6"
+        fill="none"
+        stroke="#001b70"
+        stroke-width="2"
     />
     
     <rect
-        x="100"
+        x="890"
+        y="225"
+        width="180"
+        height="50"
+        rx="10"
+        fill="#05070c"
+        stroke="#1267ff"
+        stroke-width="7"
+    />
+
+    <rect
+        x="898"
+        y="233"
+        width="164"
+        height="34"
+        rx="6"
+        fill="none"
+        stroke="#001b70"
+        stroke-width="2"
+    />
+    
+    <rect
+        x="345"
         y="205"
-        width="175"
-        height="48"
-        rx="8"
+        width="45"
+        height="105"
+        rx="10"
         fill="#05070c"
-        stroke="#086fff"
+        stroke="#1267ff"
         stroke-width="7"
+    />
+
+    <rect
+        x="353"
+        y="213"
+        width="29"
+        height="89"
+        rx="6"
+        fill="none"
+        stroke="#001b70"
+        stroke-width="2"
     />
     
     <rect
-        x="325"
-        y="185"
-        width="48"
-        height="115"
-        rx="8"
-        fill="#05070c"
-        stroke="#086fff"
-        stroke-width="7"
-    />
-    
-    <rect
-        x="925"
+        x="810"
         y="205"
-        width="120"
+        width="45"
+        height="105"
+        rx="10"
+        fill="#05070c"
+        stroke="#1267ff"
+        stroke-width="7"
+    />
+
+    <rect
+        x="818"
+        y="213"
+        width="29"
+        height="89"
+        rx="6"
+        fill="none"
+        stroke="#001b70"
+        stroke-width="2"
+    />
+    
+    <rect
+        x="130"
+        y="325"
+        width="180"
         height="48"
-        rx="8"
+        rx="10"
         fill="#05070c"
-        stroke="#086fff"
+        stroke="#1267ff"
         stroke-width="7"
+    />
+
+    <rect
+        x="138"
+        y="333"
+        width="164"
+        height="32"
+        rx="6"
+        fill="none"
+        stroke="#001b70"
+        stroke-width="2"
     />
     
     <rect
-        x="825"
-        y="185"
-        width="48"
-        height="115"
-        rx="8"
-        fill="#05070c"
-        stroke="#086fff"
-        stroke-width="7"
-    />
-    
-    <rect
-        x="100"
-        y="315"
-        width="175"
-        height="48"
-        rx="8"
-        fill="#05070c"
-        stroke="#086fff"
-        stroke-width="7"
-    />
-    
-    <rect
-        x="340"
-        y="315"
+        x="405"
+        y="330"
         width="145"
-        height="48"
-        rx="8"
+        height="40"
+        rx="10"
         fill="#05070c"
-        stroke="#086fff"
+        stroke="#1267ff"
         stroke-width="7"
+    />
+
+    <rect
+        x="413"
+        y="338"
+        width="129"
+        height="24"
+        rx="6"
+        fill="none"
+        stroke="#001b70"
+        stroke-width="2"
     />
     
     <rect
-        x="715"
-        y="315"
+        x="650"
+        y="330"
         width="145"
-        height="48"
-        rx="8"
+        height="40"
+        rx="10"
         fill="#05070c"
-        stroke="#086fff"
+        stroke="#1267ff"
         stroke-width="7"
+    />
+
+    <rect
+        x="658"
+        y="338"
+        width="129"
+        height="24"
+        rx="6"
+        fill="none"
+        stroke="#001b70"
+        stroke-width="2"
     />
     
     <rect
-        x="925"
-        y="315"
-        width="120"
+        x="890"
+        y="325"
+        width="180"
         height="48"
-        rx="8"
+        rx="10"
         fill="#05070c"
-        stroke="#086fff"
+        stroke="#1267ff"
         stroke-width="7"
+    />
+
+    <rect
+        x="898"
+        y="333"
+        width="164"
+        height="32"
+        rx="6"
+        fill="none"
+        stroke="#001b70"
+        stroke-width="2"
     />
     
 
         
 <path
     d="
-        M505 300
-        V225
+        M505 305
+        V245
 
-        Q505 208 522 208
+        Q505 230 520 230
 
-        H560
+        H565
 
-        M640 208
+        M635 230
 
-        H678
+        H680
 
-        Q695 208 695 225
+        Q695 230 695 245
 
-        V300
+        V305
         Z
     "
     fill="#05070c"
-    stroke="#086fff"
+    stroke="#1267ff"
     stroke-width="7"
     stroke-linecap="round"
     stroke-linejoin="round"
 />
 
 <line
-    x1="560"
-    y1="208"
-    x2="640"
-    y2="208"
+    x1="565"
+    y1="230"
+    x2="635"
+    y2="230"
     stroke="#ff70d5"
-    stroke-width="6"
+    stroke-width="7"
+    stroke-linecap="round"
 />
 
 
     </g>
 
 
-    <!-- PONTOS -->
+    <!-- ================================================= -->
+    <!-- PELLETS -->
+    <!-- ================================================= -->
 
     <g>
 
         
-    <circle cx="95" cy="180" r="4" fill="#ffe5a0">
+    <circle
+        cx="90"
+        cy="190"
+        r="4"
+        fill="#ffe6a3"
+    >
         <animate
             attributeName="opacity"
             values="1;1;0;0;1"
-            keyTimes="0;0.070;0.090;0.97;1"
-            dur="18s"
+            keyTimes="0;0.070;0.085;0.96;1"
+            dur="16s"
             repeatCount="indefinite"
         />
     </circle>
     
-    <circle cx="125" cy="180" r="4" fill="#ffe5a0">
+    <circle
+        cx="125"
+        cy="190"
+        r="4"
+        fill="#ffe6a3"
+    >
         <animate
             attributeName="opacity"
             values="1;1;0;0;1"
-            keyTimes="0;0.087;0.107;0.97;1"
-            dur="18s"
+            keyTimes="0;0.093;0.108;0.96;1"
+            dur="16s"
             repeatCount="indefinite"
         />
     </circle>
     
-    <circle cx="155" cy="180" r="4" fill="#ffe5a0">
+    <circle
+        cx="160"
+        cy="190"
+        r="4"
+        fill="#ffe6a3"
+    >
         <animate
             attributeName="opacity"
             values="1;1;0;0;1"
-            keyTimes="0;0.104;0.124;0.97;1"
-            dur="18s"
+            keyTimes="0;0.116;0.131;0.96;1"
+            dur="16s"
             repeatCount="indefinite"
         />
     </circle>
     
-    <circle cx="185" cy="180" r="4" fill="#ffe5a0">
+    <circle
+        cx="195"
+        cy="190"
+        r="4"
+        fill="#ffe6a3"
+    >
         <animate
             attributeName="opacity"
             values="1;1;0;0;1"
-            keyTimes="0;0.121;0.141;0.97;1"
-            dur="18s"
+            keyTimes="0;0.139;0.154;0.96;1"
+            dur="16s"
             repeatCount="indefinite"
         />
     </circle>
     
-    <circle cx="215" cy="180" r="4" fill="#ffe5a0">
+    <circle
+        cx="230"
+        cy="190"
+        r="4"
+        fill="#ffe6a3"
+    >
         <animate
             attributeName="opacity"
             values="1;1;0;0;1"
-            keyTimes="0;0.138;0.158;0.97;1"
-            dur="18s"
+            keyTimes="0;0.162;0.177;0.96;1"
+            dur="16s"
             repeatCount="indefinite"
         />
     </circle>
     
-    <circle cx="245" cy="180" r="4" fill="#ffe5a0">
+    <circle
+        cx="265"
+        cy="190"
+        r="4"
+        fill="#ffe6a3"
+    >
         <animate
             attributeName="opacity"
             values="1;1;0;0;1"
-            keyTimes="0;0.155;0.175;0.97;1"
-            dur="18s"
+            keyTimes="0;0.185;0.200;0.96;1"
+            dur="16s"
             repeatCount="indefinite"
         />
     </circle>
     
-    <circle cx="275" cy="180" r="4" fill="#ffe5a0">
+    <circle
+        cx="300"
+        cy="190"
+        r="4"
+        fill="#ffe6a3"
+    >
         <animate
             attributeName="opacity"
             values="1;1;0;0;1"
-            keyTimes="0;0.172;0.192;0.97;1"
-            dur="18s"
+            keyTimes="0;0.208;0.223;0.96;1"
+            dur="16s"
             repeatCount="indefinite"
         />
     </circle>
     
-    <circle cx="305" cy="180" r="4" fill="#ffe5a0">
+    <circle
+        cx="335"
+        cy="190"
+        r="4"
+        fill="#ffe6a3"
+    >
         <animate
             attributeName="opacity"
             values="1;1;0;0;1"
-            keyTimes="0;0.189;0.209;0.97;1"
-            dur="18s"
+            keyTimes="0;0.231;0.246;0.96;1"
+            dur="16s"
             repeatCount="indefinite"
         />
     </circle>
     
-    <circle cx="405" cy="180" r="4" fill="#ffe5a0">
+    <circle
+        cx="370"
+        cy="190"
+        r="4"
+        fill="#ffe6a3"
+    >
         <animate
             attributeName="opacity"
             values="1;1;0;0;1"
-            keyTimes="0;0.206;0.226;0.97;1"
-            dur="18s"
+            keyTimes="0;0.254;0.269;0.96;1"
+            dur="16s"
             repeatCount="indefinite"
         />
     </circle>
     
-    <circle cx="435" cy="180" r="4" fill="#ffe5a0">
+    <circle
+        cx="410"
+        cy="190"
+        r="4"
+        fill="#ffe6a3"
+    >
         <animate
             attributeName="opacity"
             values="1;1;0;0;1"
-            keyTimes="0;0.223;0.243;0.97;1"
-            dur="18s"
+            keyTimes="0;0.277;0.292;0.96;1"
+            dur="16s"
             repeatCount="indefinite"
         />
     </circle>
     
-    <circle cx="465" cy="180" r="4" fill="#ffe5a0">
+    <circle
+        cx="450"
+        cy="190"
+        r="4"
+        fill="#ffe6a3"
+    >
         <animate
             attributeName="opacity"
             values="1;1;0;0;1"
-            keyTimes="0;0.240;0.260;0.97;1"
-            dur="18s"
+            keyTimes="0;0.300;0.315;0.96;1"
+            dur="16s"
             repeatCount="indefinite"
         />
     </circle>
     
-    <circle cx="495" cy="180" r="4" fill="#ffe5a0">
+    <circle
+        cx="490"
+        cy="190"
+        r="4"
+        fill="#ffe6a3"
+    >
         <animate
             attributeName="opacity"
             values="1;1;0;0;1"
-            keyTimes="0;0.257;0.277;0.97;1"
-            dur="18s"
+            keyTimes="0;0.323;0.338;0.96;1"
+            dur="16s"
             repeatCount="indefinite"
         />
     </circle>
     
-    <circle cx="525" cy="180" r="4" fill="#ffe5a0">
+    <circle
+        cx="530"
+        cy="190"
+        r="4"
+        fill="#ffe6a3"
+    >
         <animate
             attributeName="opacity"
             values="1;1;0;0;1"
-            keyTimes="0;0.274;0.294;0.97;1"
-            dur="18s"
+            keyTimes="0;0.346;0.361;0.96;1"
+            dur="16s"
             repeatCount="indefinite"
         />
     </circle>
     
-    <circle cx="675" cy="180" r="4" fill="#ffe5a0">
+    <circle
+        cx="570"
+        cy="190"
+        r="4"
+        fill="#ffe6a3"
+    >
         <animate
             attributeName="opacity"
             values="1;1;0;0;1"
-            keyTimes="0;0.291;0.311;0.97;1"
-            dur="18s"
+            keyTimes="0;0.369;0.384;0.96;1"
+            dur="16s"
             repeatCount="indefinite"
         />
     </circle>
     
-    <circle cx="705" cy="180" r="4" fill="#ffe5a0">
+    <circle
+        cx="630"
+        cy="190"
+        r="4"
+        fill="#ffe6a3"
+    >
         <animate
             attributeName="opacity"
             values="1;1;0;0;1"
-            keyTimes="0;0.308;0.328;0.97;1"
-            dur="18s"
+            keyTimes="0;0.392;0.407;0.96;1"
+            dur="16s"
             repeatCount="indefinite"
         />
     </circle>
     
-    <circle cx="735" cy="180" r="4" fill="#ffe5a0">
+    <circle
+        cx="670"
+        cy="190"
+        r="4"
+        fill="#ffe6a3"
+    >
         <animate
             attributeName="opacity"
             values="1;1;0;0;1"
-            keyTimes="0;0.325;0.345;0.97;1"
-            dur="18s"
+            keyTimes="0;0.415;0.430;0.96;1"
+            dur="16s"
             repeatCount="indefinite"
         />
     </circle>
     
-    <circle cx="765" cy="180" r="4" fill="#ffe5a0">
+    <circle
+        cx="710"
+        cy="190"
+        r="4"
+        fill="#ffe6a3"
+    >
         <animate
             attributeName="opacity"
             values="1;1;0;0;1"
-            keyTimes="0;0.342;0.362;0.97;1"
-            dur="18s"
+            keyTimes="0;0.438;0.453;0.96;1"
+            dur="16s"
             repeatCount="indefinite"
         />
     </circle>
     
-    <circle cx="895" cy="180" r="4" fill="#ffe5a0">
+    <circle
+        cx="750"
+        cy="190"
+        r="4"
+        fill="#ffe6a3"
+    >
         <animate
             attributeName="opacity"
             values="1;1;0;0;1"
-            keyTimes="0;0.359;0.379;0.97;1"
-            dur="18s"
+            keyTimes="0;0.461;0.476;0.96;1"
+            dur="16s"
             repeatCount="indefinite"
         />
     </circle>
     
-    <circle cx="925" cy="180" r="4" fill="#ffe5a0">
+    <circle
+        cx="790"
+        cy="190"
+        r="4"
+        fill="#ffe6a3"
+    >
         <animate
             attributeName="opacity"
             values="1;1;0;0;1"
-            keyTimes="0;0.376;0.396;0.97;1"
-            dur="18s"
+            keyTimes="0;0.484;0.499;0.96;1"
+            dur="16s"
             repeatCount="indefinite"
         />
     </circle>
     
-    <circle cx="955" cy="180" r="4" fill="#ffe5a0">
+    <circle
+        cx="830"
+        cy="190"
+        r="4"
+        fill="#ffe6a3"
+    >
         <animate
             attributeName="opacity"
             values="1;1;0;0;1"
-            keyTimes="0;0.393;0.413;0.97;1"
-            dur="18s"
+            keyTimes="0;0.507;0.522;0.96;1"
+            dur="16s"
             repeatCount="indefinite"
         />
     </circle>
     
-    <circle cx="985" cy="180" r="4" fill="#ffe5a0">
+    <circle
+        cx="870"
+        cy="190"
+        r="4"
+        fill="#ffe6a3"
+    >
         <animate
             attributeName="opacity"
             values="1;1;0;0;1"
-            keyTimes="0;0.410;0.430;0.97;1"
-            dur="18s"
+            keyTimes="0;0.530;0.545;0.96;1"
+            dur="16s"
             repeatCount="indefinite"
         />
     </circle>
     
-    <circle cx="1015" cy="180" r="4" fill="#ffe5a0">
+    <circle
+        cx="910"
+        cy="190"
+        r="4"
+        fill="#ffe6a3"
+    >
         <animate
             attributeName="opacity"
             values="1;1;0;0;1"
-            keyTimes="0;0.427;0.447;0.97;1"
-            dur="18s"
+            keyTimes="0;0.553;0.568;0.96;1"
+            dur="16s"
             repeatCount="indefinite"
         />
     </circle>
     
-    <circle cx="1045" cy="180" r="4" fill="#ffe5a0">
+    <circle
+        cx="950"
+        cy="190"
+        r="4"
+        fill="#ffe6a3"
+    >
         <animate
             attributeName="opacity"
             values="1;1;0;0;1"
-            keyTimes="0;0.444;0.464;0.97;1"
-            dur="18s"
+            keyTimes="0;0.576;0.591;0.96;1"
+            dur="16s"
             repeatCount="indefinite"
         />
     </circle>
     
-    <circle cx="1075" cy="180" r="4" fill="#ffe5a0">
+    <circle
+        cx="990"
+        cy="190"
+        r="4"
+        fill="#ffe6a3"
+    >
         <animate
             attributeName="opacity"
             values="1;1;0;0;1"
-            keyTimes="0;0.461;0.481;0.97;1"
-            dur="18s"
+            keyTimes="0;0.599;0.614;0.96;1"
+            dur="16s"
             repeatCount="indefinite"
         />
     </circle>
     
-    <circle cx="305" cy="270" r="4" fill="#ffe5a0">
+    <circle
+        cx="1030"
+        cy="190"
+        r="4"
+        fill="#ffe6a3"
+    >
         <animate
             attributeName="opacity"
             values="1;1;0;0;1"
-            keyTimes="0;0.478;0.498;0.97;1"
-            dur="18s"
+            keyTimes="0;0.622;0.637;0.96;1"
+            dur="16s"
             repeatCount="indefinite"
         />
     </circle>
     
-    <circle cx="335" cy="270" r="4" fill="#ffe5a0">
+    <circle
+        cx="1070"
+        cy="190"
+        r="4"
+        fill="#ffe6a3"
+    >
         <animate
             attributeName="opacity"
             values="1;1;0;0;1"
-            keyTimes="0;0.495;0.515;0.97;1"
-            dur="18s"
+            keyTimes="0;0.645;0.660;0.96;1"
+            dur="16s"
             repeatCount="indefinite"
         />
     </circle>
     
-    <circle cx="865" cy="270" r="4" fill="#ffe5a0">
+    <circle
+        cx="1110"
+        cy="190"
+        r="4"
+        fill="#ffe6a3"
+    >
         <animate
             attributeName="opacity"
             values="1;1;0;0;1"
-            keyTimes="0;0.512;0.532;0.97;1"
-            dur="18s"
+            keyTimes="0;0.668;0.683;0.96;1"
+            dur="16s"
             repeatCount="indefinite"
         />
     </circle>
     
-    <circle cx="895" cy="270" r="4" fill="#ffe5a0">
+    <circle
+        cx="1110"
+        cy="230"
+        r="4"
+        fill="#ffe6a3"
+    >
         <animate
             attributeName="opacity"
             values="1;1;0;0;1"
-            keyTimes="0;0.529;0.549;0.97;1"
-            dur="18s"
+            keyTimes="0;0.691;0.706;0.96;1"
+            dur="16s"
             repeatCount="indefinite"
         />
     </circle>
     
-    <circle cx="300" cy="385" r="4" fill="#ffe5a0">
+    <circle
+        cx="1110"
+        cy="270"
+        r="4"
+        fill="#ffe6a3"
+    >
         <animate
             attributeName="opacity"
             values="1;1;0;0;1"
-            keyTimes="0;0.546;0.566;0.97;1"
-            dur="18s"
+            keyTimes="0;0.714;0.729;0.96;1"
+            dur="16s"
             repeatCount="indefinite"
         />
     </circle>
     
-    <circle cx="335" cy="385" r="4" fill="#ffe5a0">
+    <circle
+        cx="1110"
+        cy="310"
+        r="4"
+        fill="#ffe6a3"
+    >
         <animate
             attributeName="opacity"
             values="1;1;0;0;1"
-            keyTimes="0;0.563;0.583;0.97;1"
-            dur="18s"
+            keyTimes="0;0.737;0.752;0.96;1"
+            dur="16s"
             repeatCount="indefinite"
         />
     </circle>
     
-    <circle cx="370" cy="385" r="4" fill="#ffe5a0">
+    <circle
+        cx="1110"
+        cy="350"
+        r="4"
+        fill="#ffe6a3"
+    >
         <animate
             attributeName="opacity"
             values="1;1;0;0;1"
-            keyTimes="0;0.580;0.600;0.97;1"
-            dur="18s"
+            keyTimes="0;0.760;0.775;0.96;1"
+            dur="16s"
             repeatCount="indefinite"
         />
     </circle>
     
-    <circle cx="405" cy="385" r="4" fill="#ffe5a0">
+    <circle
+        cx="1110"
+        cy="390"
+        r="4"
+        fill="#ffe6a3"
+    >
         <animate
             attributeName="opacity"
             values="1;1;0;0;1"
-            keyTimes="0;0.597;0.617;0.97;1"
-            dur="18s"
+            keyTimes="0;0.783;0.798;0.96;1"
+            dur="16s"
             repeatCount="indefinite"
         />
     </circle>
     
-    <circle cx="440" cy="385" r="4" fill="#ffe5a0">
+    <circle
+        cx="1070"
+        cy="390"
+        r="4"
+        fill="#ffe6a3"
+    >
         <animate
             attributeName="opacity"
             values="1;1;0;0;1"
-            keyTimes="0;0.614;0.634;0.97;1"
-            dur="18s"
+            keyTimes="0;0.806;0.821;0.96;1"
+            dur="16s"
             repeatCount="indefinite"
         />
     </circle>
     
-    <circle cx="475" cy="385" r="4" fill="#ffe5a0">
+    <circle
+        cx="1030"
+        cy="390"
+        r="4"
+        fill="#ffe6a3"
+    >
         <animate
             attributeName="opacity"
             values="1;1;0;0;1"
-            keyTimes="0;0.631;0.651;0.97;1"
-            dur="18s"
+            keyTimes="0;0.829;0.844;0.96;1"
+            dur="16s"
             repeatCount="indefinite"
         />
     </circle>
     
-    <circle cx="510" cy="385" r="4" fill="#ffe5a0">
+    <circle
+        cx="990"
+        cy="390"
+        r="4"
+        fill="#ffe6a3"
+    >
         <animate
             attributeName="opacity"
             values="1;1;0;0;1"
-            keyTimes="0;0.648;0.668;0.97;1"
-            dur="18s"
+            keyTimes="0;0.852;0.867;0.96;1"
+            dur="16s"
             repeatCount="indefinite"
         />
     </circle>
     
-    <circle cx="545" cy="385" r="4" fill="#ffe5a0">
+    <circle
+        cx="950"
+        cy="390"
+        r="4"
+        fill="#ffe6a3"
+    >
         <animate
             attributeName="opacity"
             values="1;1;0;0;1"
-            keyTimes="0;0.665;0.685;0.97;1"
-            dur="18s"
+            keyTimes="0;0.875;0.890;0.96;1"
+            dur="16s"
             repeatCount="indefinite"
         />
     </circle>
     
-    <circle cx="580" cy="385" r="4" fill="#ffe5a0">
+    <circle
+        cx="910"
+        cy="390"
+        r="4"
+        fill="#ffe6a3"
+    >
         <animate
             attributeName="opacity"
             values="1;1;0;0;1"
-            keyTimes="0;0.682;0.702;0.97;1"
-            dur="18s"
+            keyTimes="0;0.880;0.895;0.96;1"
+            dur="16s"
             repeatCount="indefinite"
         />
     </circle>
     
-    <circle cx="615" cy="385" r="4" fill="#ffe5a0">
+    <circle
+        cx="870"
+        cy="390"
+        r="4"
+        fill="#ffe6a3"
+    >
         <animate
             attributeName="opacity"
             values="1;1;0;0;1"
-            keyTimes="0;0.699;0.719;0.97;1"
-            dur="18s"
+            keyTimes="0;0.880;0.895;0.96;1"
+            dur="16s"
             repeatCount="indefinite"
         />
     </circle>
     
-    <circle cx="650" cy="385" r="4" fill="#ffe5a0">
+    <circle
+        cx="830"
+        cy="390"
+        r="4"
+        fill="#ffe6a3"
+    >
         <animate
             attributeName="opacity"
             values="1;1;0;0;1"
-            keyTimes="0;0.716;0.736;0.97;1"
-            dur="18s"
+            keyTimes="0;0.880;0.895;0.96;1"
+            dur="16s"
             repeatCount="indefinite"
         />
     </circle>
     
-    <circle cx="685" cy="385" r="4" fill="#ffe5a0">
+    <circle
+        cx="790"
+        cy="390"
+        r="4"
+        fill="#ffe6a3"
+    >
         <animate
             attributeName="opacity"
             values="1;1;0;0;1"
-            keyTimes="0;0.733;0.753;0.97;1"
-            dur="18s"
+            keyTimes="0;0.880;0.895;0.96;1"
+            dur="16s"
             repeatCount="indefinite"
         />
     </circle>
     
-    <circle cx="720" cy="385" r="4" fill="#ffe5a0">
+    <circle
+        cx="750"
+        cy="390"
+        r="4"
+        fill="#ffe6a3"
+    >
         <animate
             attributeName="opacity"
             values="1;1;0;0;1"
-            keyTimes="0;0.750;0.770;0.97;1"
-            dur="18s"
+            keyTimes="0;0.880;0.895;0.96;1"
+            dur="16s"
             repeatCount="indefinite"
         />
     </circle>
     
-    <circle cx="755" cy="385" r="4" fill="#ffe5a0">
+    <circle
+        cx="710"
+        cy="390"
+        r="4"
+        fill="#ffe6a3"
+    >
         <animate
             attributeName="opacity"
             values="1;1;0;0;1"
-            keyTimes="0;0.767;0.787;0.97;1"
-            dur="18s"
+            keyTimes="0;0.880;0.895;0.96;1"
+            dur="16s"
             repeatCount="indefinite"
         />
     </circle>
     
-    <circle cx="790" cy="385" r="4" fill="#ffe5a0">
+    <circle
+        cx="670"
+        cy="390"
+        r="4"
+        fill="#ffe6a3"
+    >
         <animate
             attributeName="opacity"
             values="1;1;0;0;1"
-            keyTimes="0;0.784;0.804;0.97;1"
-            dur="18s"
+            keyTimes="0;0.880;0.895;0.96;1"
+            dur="16s"
             repeatCount="indefinite"
         />
     </circle>
     
-    <circle cx="825" cy="385" r="4" fill="#ffe5a0">
+    <circle
+        cx="630"
+        cy="390"
+        r="4"
+        fill="#ffe6a3"
+    >
         <animate
             attributeName="opacity"
             values="1;1;0;0;1"
-            keyTimes="0;0.801;0.821;0.97;1"
-            dur="18s"
+            keyTimes="0;0.880;0.895;0.96;1"
+            dur="16s"
             repeatCount="indefinite"
         />
     </circle>
     
-    <circle cx="860" cy="385" r="4" fill="#ffe5a0">
+    <circle
+        cx="590"
+        cy="390"
+        r="4"
+        fill="#ffe6a3"
+    >
         <animate
             attributeName="opacity"
             values="1;1;0;0;1"
-            keyTimes="0;0.818;0.838;0.97;1"
-            dur="18s"
+            keyTimes="0;0.880;0.895;0.96;1"
+            dur="16s"
             repeatCount="indefinite"
         />
     </circle>
     
-    <circle cx="895" cy="385" r="4" fill="#ffe5a0">
+    <circle
+        cx="550"
+        cy="390"
+        r="4"
+        fill="#ffe6a3"
+    >
         <animate
             attributeName="opacity"
             values="1;1;0;0;1"
-            keyTimes="0;0.835;0.855;0.97;1"
-            dur="18s"
+            keyTimes="0;0.880;0.895;0.96;1"
+            dur="16s"
             repeatCount="indefinite"
         />
     </circle>
     
-    <circle cx="92" cy="120" r="4" fill="#ffe5a0"/>
+    <circle
+        cx="510"
+        cy="390"
+        r="4"
+        fill="#ffe6a3"
+    >
+        <animate
+            attributeName="opacity"
+            values="1;1;0;0;1"
+            keyTimes="0;0.880;0.895;0.96;1"
+            dur="16s"
+            repeatCount="indefinite"
+        />
+    </circle>
     
-    <circle cx="92" cy="150" r="4" fill="#ffe5a0"/>
+    <circle
+        cx="470"
+        cy="390"
+        r="4"
+        fill="#ffe6a3"
+    >
+        <animate
+            attributeName="opacity"
+            values="1;1;0;0;1"
+            keyTimes="0;0.880;0.895;0.96;1"
+            dur="16s"
+            repeatCount="indefinite"
+        />
+    </circle>
     
-    <circle cx="92" cy="210" r="4" fill="#ffe5a0"/>
+    <circle
+        cx="430"
+        cy="390"
+        r="4"
+        fill="#ffe6a3"
+    >
+        <animate
+            attributeName="opacity"
+            values="1;1;0;0;1"
+            keyTimes="0;0.880;0.895;0.96;1"
+            dur="16s"
+            repeatCount="indefinite"
+        />
+    </circle>
     
-    <circle cx="92" cy="240" r="4" fill="#ffe5a0"/>
+    <circle
+        cx="390"
+        cy="390"
+        r="4"
+        fill="#ffe6a3"
+    >
+        <animate
+            attributeName="opacity"
+            values="1;1;0;0;1"
+            keyTimes="0;0.880;0.895;0.96;1"
+            dur="16s"
+            repeatCount="indefinite"
+        />
+    </circle>
     
-    <circle cx="92" cy="270" r="4" fill="#ffe5a0"/>
+    <circle
+        cx="350"
+        cy="390"
+        r="4"
+        fill="#ffe6a3"
+    >
+        <animate
+            attributeName="opacity"
+            values="1;1;0;0;1"
+            keyTimes="0;0.880;0.895;0.96;1"
+            dur="16s"
+            repeatCount="indefinite"
+        />
+    </circle>
     
-    <circle cx="92" cy="300" r="4" fill="#ffe5a0"/>
+    <circle
+        cx="310"
+        cy="390"
+        r="4"
+        fill="#ffe6a3"
+    >
+        <animate
+            attributeName="opacity"
+            values="1;1;0;0;1"
+            keyTimes="0;0.880;0.895;0.96;1"
+            dur="16s"
+            repeatCount="indefinite"
+        />
+    </circle>
     
-    <circle cx="92" cy="340" r="4" fill="#ffe5a0"/>
+    <circle
+        cx="270"
+        cy="390"
+        r="4"
+        fill="#ffe6a3"
+    >
+        <animate
+            attributeName="opacity"
+            values="1;1;0;0;1"
+            keyTimes="0;0.880;0.895;0.96;1"
+            dur="16s"
+            repeatCount="indefinite"
+        />
+    </circle>
     
-    <circle cx="92" cy="375" r="4" fill="#ffe5a0"/>
+    <circle
+        cx="230"
+        cy="390"
+        r="4"
+        fill="#ffe6a3"
+    >
+        <animate
+            attributeName="opacity"
+            values="1;1;0;0;1"
+            keyTimes="0;0.880;0.895;0.96;1"
+            dur="16s"
+            repeatCount="indefinite"
+        />
+    </circle>
     
-    <circle cx="1108" cy="120" r="4" fill="#ffe5a0"/>
+    <circle
+        cx="190"
+        cy="390"
+        r="4"
+        fill="#ffe6a3"
+    >
+        <animate
+            attributeName="opacity"
+            values="1;1;0;0;1"
+            keyTimes="0;0.880;0.895;0.96;1"
+            dur="16s"
+            repeatCount="indefinite"
+        />
+    </circle>
     
-    <circle cx="1108" cy="150" r="4" fill="#ffe5a0"/>
+    <circle
+        cx="150"
+        cy="390"
+        r="4"
+        fill="#ffe6a3"
+    >
+        <animate
+            attributeName="opacity"
+            values="1;1;0;0;1"
+            keyTimes="0;0.880;0.895;0.96;1"
+            dur="16s"
+            repeatCount="indefinite"
+        />
+    </circle>
     
-    <circle cx="1108" cy="210" r="4" fill="#ffe5a0"/>
+    <circle
+        cx="110"
+        cy="390"
+        r="4"
+        fill="#ffe6a3"
+    >
+        <animate
+            attributeName="opacity"
+            values="1;1;0;0;1"
+            keyTimes="0;0.880;0.895;0.96;1"
+            dur="16s"
+            repeatCount="indefinite"
+        />
+    </circle>
     
-    <circle cx="1108" cy="240" r="4" fill="#ffe5a0"/>
+    <circle
+        cx="90"
+        cy="350"
+        r="4"
+        fill="#ffe6a3"
+    >
+        <animate
+            attributeName="opacity"
+            values="1;1;0;0;1"
+            keyTimes="0;0.880;0.895;0.96;1"
+            dur="16s"
+            repeatCount="indefinite"
+        />
+    </circle>
     
-    <circle cx="1108" cy="270" r="4" fill="#ffe5a0"/>
+    <circle
+        cx="90"
+        cy="310"
+        r="4"
+        fill="#ffe6a3"
+    >
+        <animate
+            attributeName="opacity"
+            values="1;1;0;0;1"
+            keyTimes="0;0.880;0.895;0.96;1"
+            dur="16s"
+            repeatCount="indefinite"
+        />
+    </circle>
     
-    <circle cx="1108" cy="300" r="4" fill="#ffe5a0"/>
+    <circle
+        cx="90"
+        cy="270"
+        r="4"
+        fill="#ffe6a3"
+    >
+        <animate
+            attributeName="opacity"
+            values="1;1;0;0;1"
+            keyTimes="0;0.880;0.895;0.96;1"
+            dur="16s"
+            repeatCount="indefinite"
+        />
+    </circle>
     
-    <circle cx="1108" cy="340" r="4" fill="#ffe5a0"/>
+    <circle
+        cx="90"
+        cy="230"
+        r="4"
+        fill="#ffe6a3"
+    >
+        <animate
+            attributeName="opacity"
+            values="1;1;0;0;1"
+            keyTimes="0;0.880;0.895;0.96;1"
+            dur="16s"
+            repeatCount="indefinite"
+        />
+    </circle>
     
-    <circle cx="1108" cy="375" r="4" fill="#ffe5a0"/>
-    
-    <circle cx="300" cy="120" r="4" fill="#ffe5a0"/>
-    
-    <circle cx="325" cy="120" r="4" fill="#ffe5a0"/>
-    
-    <circle cx="550" cy="120" r="4" fill="#ffe5a0"/>
-    
-    <circle cx="575" cy="120" r="4" fill="#ffe5a0"/>
-    
-    <circle cx="800" cy="120" r="4" fill="#ffe5a0"/>
-    
-    <circle cx="825" cy="120" r="4" fill="#ffe5a0"/>
-    
-    <circle cx="1050" cy="120" r="4" fill="#ffe5a0"/>
-    
-    <circle cx="1080" cy="120" r="4" fill="#ffe5a0"/>
-    
-    <circle cx="300" cy="345" r="4" fill="#ffe5a0"/>
-    
-    <circle cx="320" cy="345" r="4" fill="#ffe5a0"/>
-    
-    <circle cx="500" cy="345" r="4" fill="#ffe5a0"/>
-    
-    <circle cx="530" cy="345" r="4" fill="#ffe5a0"/>
-    
-    <circle cx="670" cy="345" r="4" fill="#ffe5a0"/>
-    
-    <circle cx="700" cy="345" r="4" fill="#ffe5a0"/>
-    
-    <circle cx="880" cy="345" r="4" fill="#ffe5a0"/>
-    
-    <circle cx="900" cy="345" r="4" fill="#ffe5a0"/>
-    
+        <circle
+            cx="90"
+            cy="120"
+            r="4"
+            fill="#ffe6a3"
+        />
+        
+        <circle
+            cx="90"
+            cy="150"
+            r="4"
+            fill="#ffe6a3"
+        />
+        
+        <circle
+            cx="1110"
+            cy="120"
+            r="4"
+            fill="#ffe6a3"
+        />
+        
+        <circle
+            cx="1110"
+            cy="150"
+            r="4"
+            fill="#ffe6a3"
+        />
+        
+        <circle
+            cx="335"
+            cy="125"
+            r="4"
+            fill="#ffe6a3"
+        />
+        
+        <circle
+            cx="360"
+            cy="125"
+            r="4"
+            fill="#ffe6a3"
+        />
+        
+        <circle
+            cx="840"
+            cy="125"
+            r="4"
+            fill="#ffe6a3"
+        />
+        
+        <circle
+            cx="865"
+            cy="125"
+            r="4"
+            fill="#ffe6a3"
+        />
+        
+        <circle
+            cx="335"
+            cy="340"
+            r="4"
+            fill="#ffe6a3"
+        />
+        
+        <circle
+            cx="360"
+            cy="340"
+            r="4"
+            fill="#ffe6a3"
+        />
+        
+        <circle
+            cx="840"
+            cy="340"
+            r="4"
+            fill="#ffe6a3"
+        />
+        
+        <circle
+            cx="865"
+            cy="340"
+            r="4"
+            fill="#ffe6a3"
+        />
+        
+        <circle
+            cx="405"
+            cy="215"
+            r="4"
+            fill="#ffe6a3"
+        />
+        
+        <circle
+            cx="445"
+            cy="215"
+            r="4"
+            fill="#ffe6a3"
+        />
+        
+        <circle
+            cx="485"
+            cy="215"
+            r="4"
+            fill="#ffe6a3"
+        />
+        
+        <circle
+            cx="715"
+            cy="215"
+            r="4"
+            fill="#ffe6a3"
+        />
+        
+        <circle
+            cx="755"
+            cy="215"
+            r="4"
+            fill="#ffe6a3"
+        />
+        
+        <circle
+            cx="795"
+            cy="215"
+            r="4"
+            fill="#ffe6a3"
+        />
+        
+        <circle
+            cx="410"
+            cy="295"
+            r="4"
+            fill="#ffe6a3"
+        />
+        
+        <circle
+            cx="450"
+            cy="295"
+            r="4"
+            fill="#ffe6a3"
+        />
+        
+        <circle
+            cx="750"
+            cy="295"
+            r="4"
+            fill="#ffe6a3"
+        />
+        
+        <circle
+            cx="790"
+            cy="295"
+            r="4"
+            fill="#ffe6a3"
+        />
+        
 
         
-    <circle cx="92" cy="105" r="9" fill="#fff1c4">
+    <circle
+        cx="90"
+        cy="110"
+        r="10"
+        fill="#fff1c4"
+    >
         <animate
             attributeName="r"
             values="8;11;8"
             dur="0.65s"
             repeatCount="indefinite"
         />
+
+        <animate
+            attributeName="opacity"
+            values="1;0.55;1"
+            dur="0.65s"
+            repeatCount="indefinite"
+        />
     </circle>
     
-    <circle cx="1108" cy="105" r="9" fill="#fff1c4">
+    <circle
+        cx="1110"
+        cy="110"
+        r="10"
+        fill="#fff1c4"
+    >
         <animate
             attributeName="r"
             values="8;11;8"
             dur="0.65s"
             repeatCount="indefinite"
         />
+
+        <animate
+            attributeName="opacity"
+            values="1;0.55;1"
+            dur="0.65s"
+            repeatCount="indefinite"
+        />
     </circle>
     
-    <circle cx="92" cy="395" r="9" fill="#fff1c4">
+    <circle
+        cx="90"
+        cy="400"
+        r="10"
+        fill="#fff1c4"
+    >
         <animate
             attributeName="r"
             values="8;11;8"
             dur="0.65s"
             repeatCount="indefinite"
         />
+
+        <animate
+            attributeName="opacity"
+            values="1;0.55;1"
+            dur="0.65s"
+            repeatCount="indefinite"
+        />
     </circle>
     
-    <circle cx="1108" cy="395" r="9" fill="#fff1c4">
+    <circle
+        cx="1110"
+        cy="400"
+        r="10"
+        fill="#fff1c4"
+    >
         <animate
             attributeName="r"
             values="8;11;8"
+            dur="0.65s"
+            repeatCount="indefinite"
+        />
+
+        <animate
+            attributeName="opacity"
+            values="1;0.55;1"
             dur="0.65s"
             repeatCount="indefinite"
         />
@@ -862,226 +1687,385 @@
     </g>
 
 
-    <!-- READY -->
-
-    <text
-        x="555"
-        y="195"
-        fill="#ffe500"
-        font-family="monospace"
-        font-size="18"
-        font-weight="bold"
-    >
-        READY!
-
-        <animate
-            attributeName="opacity"
-            values="1;1;0;0"
-            keyTimes="0;0.06;0.10;1"
-            dur="18s"
-            repeatCount="indefinite"
-        />
-
-    </text>
-
-
-    <!-- FANTASMAS -->
+    <!-- ================================================= -->
+    <!-- FANTASMA VERMELHO -->
+    <!-- ================================================= -->
 
     
     <g>
+
         <animateMotion
-            path="M600 245 H800 V180 H1105 V270 H895 V385 H600 V300 H400 V180 H95 V270 H320 V245 H600"
-            dur="14.5s"
+            dur="13.4s"
             begin="0s"
             repeatCount="indefinite"
             rotate="auto"
+            path="M600 260 H855 V190 H1110 V390 H810 V320 H600 V295 H390 V190 H90 V390 H390 V260 H600"
         />
 
-        <g transform="translate(-17,-17)">
+        <g transform="translate(-18,-18)">
+
             <path
                 d="
-                    M2 33
-                    V17
-                    C2 8 8 2 17 2
-                    C26 2 32 8 32 17
-                    V33
-                    L27 28
-                    L22 33
-                    L17 28
-                    L12 33
-                    L7 28
+                    M2 34
+                    V18
+
+                    C2 8 9 2 18 2
+                    C27 2 34 8 34 18
+
+                    V34
+
+                    L29 29
+                    L24 34
+                    L18 29
+                    L12 34
+                    L7 29
                     Z
                 "
                 fill="#ff3131"
             />
 
-            <ellipse cx="11" cy="15" rx="5" ry="6" fill="white"/>
-            <ellipse cx="23" cy="15" rx="5" ry="6" fill="white"/>
+            <!-- OLHOS -->
 
-            <circle cx="13" cy="16" r="2.5" fill="#12275c"/>
-            <circle cx="25" cy="16" r="2.5" fill="#12275c"/>
-        </g>
-    </g>
-    
-
-    
-    <g>
-        <animateMotion
-            path="M600 245 H400 V180 H95 V270 H320 V385 H600 V300 H895 V180 H1105 V270 H895 V245 H600"
-            dur="15.8s"
-            begin="-2.5s"
-            repeatCount="indefinite"
-            rotate="auto"
-        />
-
-        <g transform="translate(-17,-17)">
-            <path
-                d="
-                    M2 33
-                    V17
-                    C2 8 8 2 17 2
-                    C26 2 32 8 32 17
-                    V33
-                    L27 28
-                    L22 33
-                    L17 28
-                    L12 33
-                    L7 28
-                    Z
-                "
-                fill="#ff86df"
+            <ellipse
+                cx="13"
+                cy="15"
+                rx="5"
+                ry="6"
+                fill="#ffffff"
             />
 
-            <ellipse cx="11" cy="15" rx="5" ry="6" fill="white"/>
-            <ellipse cx="23" cy="15" rx="5" ry="6" fill="white"/>
-
-            <circle cx="13" cy="16" r="2.5" fill="#12275c"/>
-            <circle cx="25" cy="16" r="2.5" fill="#12275c"/>
-        </g>
-    </g>
-    
-
-    
-    <g>
-        <animateMotion
-            path="M575 245 H400 V270 H95 V180 H320 V245 H575 V385 H895 V270 H1105 V180 H880 V245 H575"
-            dur="16.8s"
-            begin="-5.1s"
-            repeatCount="indefinite"
-            rotate="auto"
-        />
-
-        <g transform="translate(-17,-17)">
-            <path
-                d="
-                    M2 33
-                    V17
-                    C2 8 8 2 17 2
-                    C26 2 32 8 32 17
-                    V33
-                    L27 28
-                    L22 33
-                    L17 28
-                    L12 33
-                    L7 28
-                    Z
-                "
-                fill="#24d8ff"
+            <ellipse
+                cx="25"
+                cy="15"
+                rx="5"
+                ry="6"
+                fill="#ffffff"
             />
 
-            <ellipse cx="11" cy="15" rx="5" ry="6" fill="white"/>
-            <ellipse cx="23" cy="15" rx="5" ry="6" fill="white"/>
+            <circle
+                cx="15"
+                cy="16"
+                r="2.5"
+                fill="#163c96"
+            />
 
-            <circle cx="13" cy="16" r="2.5" fill="#12275c"/>
-            <circle cx="25" cy="16" r="2.5" fill="#12275c"/>
+            <circle
+                cx="27"
+                cy="16"
+                r="2.5"
+                fill="#163c96"
+            />
+
         </g>
+
     </g>
     
 
+
+    <!-- ================================================= -->
+    <!-- FANTASMA ROSA -->
+    <!-- ================================================= -->
+
     
     <g>
+
         <animateMotion
-            path="M625 245 H895 V270 H1105 V180 H880 V245 H625 V385 H305 V270 H95 V180 H320 V245 H625"
             dur="15.2s"
-            begin="-7.8s"
+            begin="-3s"
             repeatCount="indefinite"
             rotate="auto"
+            path="M600 260 H390 V190 H90 V390 H390 V320 H600 V390 H810 V295 H1110 V190 H855 V260 H600"
         />
 
-        <g transform="translate(-17,-17)">
+        <g transform="translate(-18,-18)">
+
             <path
                 d="
-                    M2 33
-                    V17
-                    C2 8 8 2 17 2
-                    C26 2 32 8 32 17
-                    V33
-                    L27 28
-                    L22 33
-                    L17 28
-                    L12 33
-                    L7 28
+                    M2 34
+                    V18
+
+                    C2 8 9 2 18 2
+                    C27 2 34 8 34 18
+
+                    V34
+
+                    L29 29
+                    L24 34
+                    L18 29
+                    L12 34
+                    L7 29
                     Z
                 "
-                fill="#ff9e2f"
+                fill="#ff88dd"
             />
 
-            <ellipse cx="11" cy="15" rx="5" ry="6" fill="white"/>
-            <ellipse cx="23" cy="15" rx="5" ry="6" fill="white"/>
+            <!-- OLHOS -->
 
-            <circle cx="13" cy="16" r="2.5" fill="#12275c"/>
-            <circle cx="25" cy="16" r="2.5" fill="#12275c"/>
+            <ellipse
+                cx="13"
+                cy="15"
+                rx="5"
+                ry="6"
+                fill="#ffffff"
+            />
+
+            <ellipse
+                cx="25"
+                cy="15"
+                rx="5"
+                ry="6"
+                fill="#ffffff"
+            />
+
+            <circle
+                cx="15"
+                cy="16"
+                r="2.5"
+                fill="#163c96"
+            />
+
+            <circle
+                cx="27"
+                cy="16"
+                r="2.5"
+                fill="#163c96"
+            />
+
         </g>
+
     </g>
     
 
 
-    <!-- PAC-MAN -->
+    <!-- ================================================= -->
+    <!-- FANTASMA AZUL -->
+    <!-- ================================================= -->
 
+    
     <g>
 
         <animateMotion
-            path="M95 180 H320 V270 H400 V385 H895 V270 H1105 V180 H880 V385 H305 V270 H95 V180"
-            dur="18s"
+            dur="16.3s"
+            begin="-6s"
             repeatCount="indefinite"
             rotate="auto"
+            path="M570 260 H390 V295 H90 V190 H390 V260 H570 V390 H810 V295 H1110 V190 H855 V260 H570"
         />
+
+        <g transform="translate(-18,-18)">
+
+            <path
+                d="
+                    M2 34
+                    V18
+
+                    C2 8 9 2 18 2
+                    C27 2 34 8 34 18
+
+                    V34
+
+                    L29 29
+                    L24 34
+                    L18 29
+                    L12 34
+                    L7 29
+                    Z
+                "
+                fill="#21d4fd"
+            />
+
+            <!-- OLHOS -->
+
+            <ellipse
+                cx="13"
+                cy="15"
+                rx="5"
+                ry="6"
+                fill="#ffffff"
+            />
+
+            <ellipse
+                cx="25"
+                cy="15"
+                rx="5"
+                ry="6"
+                fill="#ffffff"
+            />
+
+            <circle
+                cx="15"
+                cy="16"
+                r="2.5"
+                fill="#163c96"
+            />
+
+            <circle
+                cx="27"
+                cy="16"
+                r="2.5"
+                fill="#163c96"
+            />
+
+        </g>
+
+    </g>
+    
+
+
+    <!-- ================================================= -->
+    <!-- FANTASMA LARANJA -->
+    <!-- ================================================= -->
+
+    
+    <g>
+
+        <animateMotion
+            dur="14.6s"
+            begin="-8s"
+            repeatCount="indefinite"
+            rotate="auto"
+            path="M630 260 H855 V295 H1110 V190 H855 V260 H630 V390 H390 V295 H90 V190 H390 V260 H630"
+        />
+
+        <g transform="translate(-18,-18)">
+
+            <path
+                d="
+                    M2 34
+                    V18
+
+                    C2 8 9 2 18 2
+                    C27 2 34 8 34 18
+
+                    V34
+
+                    L29 29
+                    L24 34
+                    L18 29
+                    L12 34
+                    L7 29
+                    Z
+                "
+                fill="#ff9d2e"
+            />
+
+            <!-- OLHOS -->
+
+            <ellipse
+                cx="13"
+                cy="15"
+                rx="5"
+                ry="6"
+                fill="#ffffff"
+            />
+
+            <ellipse
+                cx="25"
+                cy="15"
+                rx="5"
+                ry="6"
+                fill="#ffffff"
+            />
+
+            <circle
+                cx="15"
+                cy="16"
+                r="2.5"
+                fill="#163c96"
+            />
+
+            <circle
+                cx="27"
+                cy="16"
+                r="2.5"
+                fill="#163c96"
+            />
+
+        </g>
+
+    </g>
+    
+
+
+    <!-- ================================================= -->
+    <!-- PAC-MAN -->
+    <!-- ================================================= -->
+
+    <g filter="url(#yellowGlow)">
+
+        <animateMotion
+            dur="16s"
+            repeatCount="indefinite"
+            rotate="auto"
+            path="M90 190 H390 V295 H455 V390 H810 V295 H855 V190 H1110 V390 H810 V320 H390 V390 H90 V190"
+        />
+
 
         <g>
 
             <path
                 fill="#ffe329"
                 d="
-                    M18 0
-                    L-6 -15
-                    A18 18 0 1 0 -6 15
+                    M20 0
+                    L-7 -16
+                    A20 20 0 1 0 -7 16
                     Z
                 "
             >
 
+                <!-- BOCA ABRINDO E FECHANDO -->
+
                 <animate
                     attributeName="d"
                     values="
-                        M18 0 L-6 -15 A18 18 0 1 0 -6 15 Z;
-                        M18 0 L-14 -4 A18 18 0 1 0 -14 4 Z;
-                        M18 0 L-6 -15 A18 18 0 1 0 -6 15 Z
+                        M20 0 L-7 -16 A20 20 0 1 0 -7 16 Z;
+                        M20 0 L-16 -5 A20 20 0 1 0 -16 5 Z;
+                        M20 0 L-7 -16 A20 20 0 1 0 -7 16 Z
                     "
-                    dur="0.23s"
+                    dur="0.22s"
                     repeatCount="indefinite"
                 />
 
             </path>
 
+
+            <!-- OLHO -->
+
             <circle
-                cx="3"
-                cy="-8"
-                r="2.2"
-                fill="#111827"
+                cx="4"
+                cy="-9"
+                r="2.5"
+                fill="#101010"
             />
 
         </g>
 
     </g>
 
+
+    <!-- ================================================= -->
+    <!-- READY -->
+    <!-- ================================================= -->
+
+    <text
+        x="555"
+        y="215"
+        fill="#ffe500"
+        font-family="'Courier New', monospace"
+        font-size="19"
+        font-weight="700"
+    >
+
+        READY!
+
+        <animate
+            attributeName="opacity"
+            values="1;1;0;0"
+            keyTimes="0;0.045;0.10;1"
+            dur="16s"
+            repeatCount="indefinite"
+        />
+
+    </text>
 
 </svg>
