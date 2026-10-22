@@ -1,744 +1,359 @@
+"""Gera o labirinto e as rotas a partir da mesma grade, sem dependencias."""
+from collections import defaultdict, deque
+from math import hypot
 from pathlib import Path
+import os
+import random
 
-WIDTH = 1200
-HEIGHT = 470
+WIDTH, HEIGHT = 1200, 690
+COLS, ROWS, CELL = 35, 19, 30
+LEFT, TOP = (WIDTH - COLS * CELL) / 2, 78
+WALL_STROKE = 3
+PAC_RADIUS = 11
+STEP_TIME = 0.16
+BACKGROUND = "#05070c"
+BLUE = "#0878ff"
+YELLOW = "#ffe329"
+NS = "http://www.w3.org/2000/svg"
 
-PACMAN_TIME = 20
+
+def make_maze():
+    grid = [["." for _ in range(COLS)] for _ in range(ROWS)]
+
+    def wall(x1, y1, x2, y2, mirror=True):
+        for row in range(y1, y2 + 1):
+            for col in range(x1, x2 + 1):
+                grid[row][col] = "#"
+                if mirror:
+                    grid[row][COLS - 1 - col] = "#"
+
+    wall(0, 0, COLS - 1, 0)
+    wall(0, ROWS - 1, COLS - 1, ROWS - 1)
+    wall(0, 0, 0, ROWS - 1)
+
+    # Blocos simetricos, com corredores de pelo menos uma celula.
+    for x1, x2 in ((2, 5), (7, 10), (12, 15)):
+        wall(x1, 2, x2, 3)
+    wall(17, 0, 17, 3)
+
+    wall(2, 5, 5, 5)
+    wall(7, 5, 7, 7)
+    wall(9, 5, 12, 5)
+    wall(12, 5, 12, 6)
+    wall(14, 5, 20, 5)
+    wall(17, 5, 17, 6)
+
+    wall(2, 7, 5, 9)
+    wall(9, 8, 11, 9)
+    wall(7, 9, 7, 10)
+
+    wall(2, 11, 5, 12)
+    wall(7, 12, 7, 14)
+    wall(9, 12, 12, 12)
+    wall(12, 12, 12, 13)
+
+    wall(14, 13, 20, 13)
+    wall(17, 13, 17, 15)
+    wall(2, 14, 5, 14)
+    wall(5, 14, 5, 16)
+    wall(2, 16, 3, 16)
+    wall(9, 15, 12, 15)
+    wall(7, 16, 15, 16)
+    wall(17, 17, 17, 18)
+
+    # A casa tem uma unica porta. Apenas os fantasmas entram nela.
+    wall(14, 8, 20, 8)
+    wall(14, 11, 20, 11)
+    wall(14, 8, 14, 11)
+    grid[8][17] = "D"
+    for row in (9, 10):
+        for col in range(15, 20):
+            grid[row][col] = "H"
+    return grid
 
 
-def pellet(x, y, delay=0):
+def make_graph(grid, ghost=False):
+    allowed = ".DH" if ghost else "."
+    graph = {}
+    for row in range(ROWS):
+        for col in range(COLS):
+            if grid[row][col] not in allowed:
+                continue
+            cell = (row, col)
+            graph[cell] = [
+                (nr, nc)
+                for nr, nc in ((row - 1, col), (row, col + 1),
+                               (row + 1, col), (row, col - 1))
+                if 0 <= nr < ROWS and 0 <= nc < COLS
+                and grid[nr][nc] in allowed
+            ]
+    return graph
+
+
+def shortest_path(graph, start, target):
+    previous = {start: None}
+    queue = deque([start])
+    while queue:
+        cell = queue.popleft()
+        if cell == target:
+            path = []
+            while cell is not None:
+                path.append(cell)
+                cell = previous[cell]
+            return path[::-1]
+        for other in graph[cell]:
+            if other not in previous:
+                previous[other] = cell
+                queue.append(other)
+    raise ValueError(f"Corredor desconectado: {start} -> {target}")
+
+
+def pacman_route(graph, start, rng):
+    # Passeio completo e fechado; a ordem muda conforme a semente.
+    route, visited, stack = [start], {start}, [start]
+    while stack:
+        cell = stack[-1]
+        options = [other for other in graph[cell] if other not in visited]
+        if options:
+            other = rng.choice(options)
+            visited.add(other)
+            stack.append(other)
+            route.append(other)
+        else:
+            stack.pop()
+            if stack:
+                route.append(stack[-1])
+    if visited != set(graph):
+        raise ValueError("Existem corredores ou pontos inacessiveis.")
+    return route
+
+
+def ghost_route(graph, outside, start, rng):
+    exit_cell = (7, 17)
+    route = shortest_path(graph, start, exit_cell)
+    previous = route[-2]
+    for _ in range(130):
+        cell = route[-1]
+        options = [other for other in outside[cell] if other != previous]
+        other = rng.choice(options or outside[cell])
+        previous = cell
+        route.append(other)
+    # A volta tambem usa os corredores, sem salto ao reiniciar o SVG.
+    route.extend(shortest_path(graph, route[-1], start)[1:])
+    return route
+
+
+def center(cell):
+    row, col = cell
+    return LEFT + (col + 0.5) * CELL, TOP + (row + 0.5) * CELL
+
+
+def validate_routes(grid, routes):
+    """Valida cada trecho e a folga fisica dos personagens junto as paredes."""
+    walls = [
+        (LEFT + col * CELL, TOP + row * CELL,
+         LEFT + (col + 1) * CELL, TOP + (row + 1) * CELL)
+        for row in range(ROWS) for col in range(COLS)
+        if grid[row][col] == "#"
+    ]
+    minimum = float("inf")
+    for name, route in routes.items():
+        if route[0] != route[-1]:
+            raise ValueError(f"{name}: o ciclo precisa terminar onde comecou.")
+        for a, b in zip(route, route[1:]):
+            if abs(a[0] - b[0]) + abs(a[1] - b[1]) != 1:
+                raise ValueError(f"{name}: salto ou diagonal entre {a} e {b}.")
+            if any(grid[r][c] == "#" for r, c in (a, b)):
+                raise ValueError(f"{name}: rota dentro de uma parede.")
+            if name == "pacman" and any(grid[r][c] != "." for r, c in (a, b)):
+                raise ValueError("Pac-Man nao pode entrar na casa.")
+            ax, ay = center(a)
+            bx, by = center(b)
+            for x1, y1, x2, y2 in walls:
+                dx = max(x1 - max(ax, bx), min(ax, bx) - x2, 0)
+                dy = max(y1 - max(ay, by), min(ay, by) - y2, 0)
+                clearance = hypot(dx, dy)
+                minimum = min(minimum, clearance)
+                if clearance < PAC_RADIUS + WALL_STROKE / 2:
+                    raise ValueError(f"{name}: personagem encostando na parede.")
+    return minimum
+
+
+def wall_contours(grid):
+    # Contorna a uniao dos blocos: sem emendas azuis no meio das paredes.
+    edges = set()
+    for row in range(ROWS):
+        for col in range(COLS):
+            if grid[row][col] != "#":
+                continue
+            for nr, nc, a, b in (
+                (row - 1, col, (col, row), (col + 1, row)),
+                (row, col + 1, (col + 1, row), (col + 1, row + 1)),
+                (row + 1, col, (col + 1, row + 1), (col, row + 1)),
+                (row, col - 1, (col, row + 1), (col, row)),
+            ):
+                if not (0 <= nr < ROWS and 0 <= nc < COLS) or grid[nr][nc] != "#":
+                    edges.add((a, b))
+    outgoing = defaultdict(set)
+    for a, b in edges:
+        outgoing[a].add(b)
+    contours = []
+    while edges:
+        first, current = min(edges)
+        previous, points = first, [first]
+        edges.remove((first, current))
+        while current != first:
+            points.append(current)
+            dx, dy = current[0] - previous[0], current[1] - previous[1]
+            directions = ((-dy, dx), (dx, dy), (dy, -dx), (-dx, -dy))
+            candidates = [
+                (current[0] + vx, current[1] + vy) for vx, vy in directions
+                if (current, (current[0] + vx, current[1] + vy)) in edges
+            ]
+            if not candidates:
+                raise ValueError("Contorno aberto no labirinto.")
+            following = candidates[0]
+            edges.remove((current, following))
+            previous, current = current, following
+        # Mantem apenas os cantos para desenhar curvas limpas.
+        corners = []
+        for i, point in enumerate(points):
+            before, after = points[i - 1], points[(i + 1) % len(points)]
+            if ((point[0] - before[0]) * (after[1] - point[1])
+                    != (point[1] - before[1]) * (after[0] - point[0])):
+                corners.append((LEFT + point[0] * CELL, TOP + point[1] * CELL))
+        contours.append(corners)
+    return contours
+
+
+def rounded_path(points, radius=4):
+    incoming, outgoing = [], []
+    for i, (x, y) in enumerate(points):
+        px, py = points[i - 1]
+        nx, ny = points[(i + 1) % len(points)]
+        before, after = hypot(x - px, y - py), hypot(nx - x, ny - y)
+        cut = min(radius, before / 2, after / 2)
+        incoming.append((x - (x - px) / before * cut, y - (y - py) / before * cut))
+        outgoing.append((x + (nx - x) / after * cut, y + (ny - y) / after * cut))
+    pieces = [f"M{incoming[0][0]:g},{incoming[0][1]:g}"]
+    for i, (x, y) in enumerate(points):
+        if i:
+            pieces.append(f"L{incoming[i][0]:g},{incoming[i][1]:g}")
+        pieces.append(f"Q{x:g},{y:g} {outgoing[i][0]:g},{outgoing[i][1]:g}")
+    return " ".join(pieces) + " Z"
+
+
+def motion(route, duration, rotate=False):
+    points = [center(cell) for cell in route]
+    path = "M" + " L".join(f"{x:g},{y:g}" for x, y in points)
+    rotation = ' rotate="auto"' if rotate else ""
+    return (f'<animateMotion dur="{duration:g}s" repeatCount="indefinite" '
+            f'calcMode="paced" path="{path}"{rotation}/>')
+
+
+def ghost(name, color, route, duration):
+    # Somente o Pac-Man gira. Os fantasmas ficam sempre em pe.
     return f"""
-    <circle cx="{x}" cy="{y}" r="3.3" fill="#ffe8a3">
-        <animate
-            attributeName="opacity"
-            values="1;1;0;0;1"
-            keyTimes="0;{delay:.3f};{min(delay + 0.015, 0.94):.3f};0.97;1"
-            dur="{PACMAN_TIME}s"
-            repeatCount="indefinite"
-        />
-    </circle>
-    """
+    <g id="{name}" data-character="ghost">
+      {motion(route, duration)}
+      <path fill="{color}" d="M-10.5,11 V-1 A10.5,10.5 0 0 1 10.5,-1
+        V11 L7,8 L3.5,11 L0,8 L-3.5,11 L-7,8 Z"/>
+      <ellipse cx="-4.4" cy="-1.5" rx="3.3" ry="4" fill="white"/>
+      <ellipse cx="4.4" cy="-1.5" rx="3.3" ry="4" fill="white"/>
+      <circle cx="-3.5" cy="-1.2" r="1.6" fill="#1847bd"/>
+      <circle cx="5.3" cy="-1.2" r="1.6" fill="#1847bd"/>
+    </g>"""
 
 
-def static_pellet(x, y):
-    return f'<circle cx="{x}" cy="{y}" r="3.3" fill="#ffe8a3"/>'
+def build_scene(seed=2026):
+    grid = make_maze()
+    outside, inside = make_graph(grid), make_graph(grid, ghost=True)
+    rng = random.Random(seed)
+    routes = {"pacman": pacman_route(outside, (12, 17), rng)}
+    for name, start in (
+        ("blinky", (9, 15)), ("pinky", (9, 16)),
+        ("inky", (9, 18)), ("clyde", (9, 19)),
+    ):
+        routes[name] = ghost_route(inside, outside, start, rng)
+    clearance = validate_routes(grid, routes)
+    return grid, routes, clearance
 
 
-def power_pellet(x, y):
-    return f"""
-    <circle cx="{x}" cy="{y}" r="9" fill="#fff2c7">
-        <animate
-            attributeName="opacity"
-            values="1;0.45;1"
-            dur="0.7s"
-            repeatCount="indefinite"
-        />
-        <animate
-            attributeName="r"
-            values="8;10;8"
-            dur="0.7s"
-            repeatCount="indefinite"
-        />
-    </circle>
-    """
-
-
-def ghost(color, path, duration, begin):
-    return f"""
-    <g>
-        <animateMotion
-            dur="{duration}s"
-            begin="{begin}s"
-            repeatCount="indefinite"
-            rotate="auto"
-            path="{path}"
-        />
-
-        <g transform="translate(-16,-16)">
-            <path
-                d="
-                M2 31
-                V16
-                C2 7 8 2 16 2
-                C24 2 30 7 30 16
-                V31
-                L26 27
-                L22 31
-                L17 27
-                L12 31
-                L7 27
-                L2 31 Z
-                "
-                fill="{color}"
-            />
-
-            <ellipse cx="11" cy="14" rx="4.5" ry="5.5" fill="white"/>
-            <ellipse cx="22" cy="14" rx="4.5" ry="5.5" fill="white"/>
-
-            <circle cx="13" cy="15" r="2.2" fill="#164cc9"/>
-            <circle cx="24" cy="15" r="2.2" fill="#164cc9"/>
-        </g>
-    </g>
-    """
-
-
-# ==========================================================
-# LABIRINTO
-# ==========================================================
-
-maze = r"""
-<g
-    fill="none"
-    stroke="#0878ff"
-    stroke-width="7"
-    stroke-linecap="round"
-    stroke-linejoin="round"
->
-
-    <!-- BORDA EXTERNA -->
-    <rect x="45" y="90" width="1110" height="330" rx="16"/>
-
-    <!-- TOPO ESQUERDO -->
-    <path d="
-        M115 130 H300
-        V175
-        H115
-        Z
-    "/>
-
-    <!-- TOPO CENTRO ESQUERDO -->
-    <path d="
-        M380 130 H535
-        V175
-        H380
-        Z
-    "/>
-
-    <!-- TOPO CENTRO DIREITO -->
-    <path d="
-        M665 130 H820
-        V175
-        H665
-        Z
-    "/>
-
-    <!-- TOPO DIREITO -->
-    <path d="
-        M900 130 H1085
-        V175
-        H900
-        Z
-    "/>
-
-    <!-- BLOCO MEIO ESQUERDO -->
-    <path d="
-        M115 230 H300
-        V275
-        H115
-        Z
-    "/>
-
-    <!-- BLOCO MEIO DIREITO -->
-    <path d="
-        M900 230 H1085
-        V275
-        H900
-        Z
-    "/>
-
-    <!-- VERTICAL ESQUERDA -->
-    <path d="
-        M340 205
-        V305
-        H385
-        V205
-    "/>
-
-    <!-- VERTICAL DIREITA -->
-    <path d="
-        M815 205
-        V305
-        H860
-        V205
-    "/>
-
-    <!-- CENTRO SUPERIOR -->
-    <path d="
-        M455 205
-        H535
-        V225
-    "/>
-
-    <path d="
-        M665 205
-        H745
-        V225
-    "/>
-
-    <!-- CASA DOS FANTASMAS -->
-    <path d="
-        M505 310
-        V250
-        Q505 235 520 235
-        H560
-    "/>
-
-    <path d="
-        M640 235
-        H680
-        Q695 235 695 250
-        V310
-    "/>
-
-    <path d="
-        M505 310
-        H695
-    "/>
-
-    <!-- INFERIOR ESQUERDO -->
-    <path d="
-        M115 330
-        H300
-        V375
-        H115
-        Z
-    "/>
-
-    <!-- INFERIOR CENTRAL ESQUERDO -->
-    <path d="
-        M385 340
-        H520
-        V375
-        H385
-        Z
-    "/>
-
-    <!-- INFERIOR CENTRAL DIREITO -->
-    <path d="
-        M680 340
-        H815
-        V375
-        H680
-        Z
-    "/>
-
-    <!-- INFERIOR DIREITO -->
-    <path d="
-        M900 330
-        H1085
-        V375
-        H900
-        Z
-    "/>
-
-</g>
-
-<!-- PORTA ROSA DA CASA -->
-<line
-    x1="560"
-    y1="235"
-    x2="640"
-    y2="235"
-    stroke="#ff76d9"
-    stroke-width="7"
-    stroke-linecap="round"
-/>
-"""
-
-
-# ==========================================================
-# PELLETS
-# ==========================================================
-
-route_points = [
-    (75, 195),
-    (115, 195),
-    (155, 195),
-    (195, 195),
-    (235, 195),
-    (275, 195),
-    (315, 195),
-    (355, 195),
-    (395, 195),
-    (435, 195),
-    (475, 195),
-    (515, 195),
-    (555, 195),
-    (595, 195),
-    (635, 195),
-    (675, 195),
-    (715, 195),
-    (755, 195),
-    (795, 195),
-    (835, 195),
-    (875, 195),
-    (915, 195),
-    (955, 195),
-    (995, 195),
-    (1035, 195),
-    (1075, 195),
-    (1125, 195),
-
-    (1125, 235),
-    (1125, 275),
-    (1125, 315),
-    (1125, 355),
-    (1125, 395),
-
-    (1085, 395),
-    (1045, 395),
-    (1005, 395),
-    (965, 395),
-    (925, 395),
-    (885, 395),
-    (845, 395),
-    (805, 395),
-    (765, 395),
-    (725, 395),
-    (685, 395),
-    (645, 395),
-    (605, 395),
-    (565, 395),
-    (525, 395),
-    (485, 395),
-    (445, 395),
-    (405, 395),
-    (365, 395),
-    (325, 395),
-    (285, 395),
-    (245, 395),
-    (205, 395),
-    (165, 395),
-    (125, 395),
-    (75, 395),
-
-    (75, 355),
-    (75, 315),
-    (75, 275),
-    (75, 235),
-]
-
-pellets = []
-
-total = len(route_points)
-
-for i, (x, y) in enumerate(route_points):
-    delay = 0.05 + (i / total) * 0.82
-    pellets.append(
-        pellet(x, y, delay)
+def generate(seed=2026):
+    grid, routes, clearance = build_scene(seed)
+    pac_route = routes["pacman"]
+    duration = (len(pac_route) - 1) * STEP_TIME
+    first_visit = {}
+    for step, cell in enumerate(pac_route):
+        first_visit.setdefault(cell, step)
+    powers = {(1, 1), (1, 33), (17, 1), (17, 33)}
+    pellets = []
+    for cell, first in sorted(first_visit.items()):
+        x, y = center(cell)
+        power = cell in powers
+        eaten = max(0.00001, first / (len(pac_route) - 1))
+        blink = ('<animate attributeName="r" values="4.8;6;4.8" dur="0.7s" '
+                 'repeatCount="indefinite"/>') if power else ""
+        pellets.append(
+            f'<circle cx="{x:g}" cy="{y:g}" r="{5.5 if power else 2.2}" fill="#ffe8a3">'
+            f'<animate attributeName="opacity" values="1;0;1" '
+            f'keyTimes="0;{eaten:.6f};0.999999" calcMode="discrete" '
+            f'dur="{duration:g}s" repeatCount="indefinite"/>{blink}</circle>'
+        )
+    walls = "".join(
+        f'<path d="{rounded_path(points)}"/>' for points in wall_contours(grid)
     )
-
-
-static_points = [
-    (75, 115),
-    (75, 150),
-
-    (1125, 115),
-    (1125, 150),
-
-    (325, 115),
-    (350, 115),
-
-    (850, 115),
-    (875, 115),
-
-    (325, 320),
-    (350, 320),
-
-    (850, 320),
-    (875, 320),
-
-    (405, 215),
-    (440, 215),
-    (475, 215),
-
-    (725, 215),
-    (760, 215),
-    (795, 215),
-
-    (405, 300),
-    (445, 300),
-    (485, 300),
-
-    (715, 300),
-    (755, 300),
-    (795, 300),
-]
-
-for x, y in static_points:
-    pellets.append(
-        static_pellet(x, y)
+    gate_x, gate_y = center((8, 17))
+    ghosts = "".join(
+        ghost(name, color, routes[name], (len(routes[name]) - 1) * speed)
+        for name, color, speed in (
+            ("blinky", "#ff3939", 0.19), ("pinky", "#ff93dc", 0.205),
+            ("inky", "#32ddff", 0.215), ("clyde", "#ffa241", 0.225),
+        )
     )
-
-
-powers = [
-    power_pellet(75, 110),
-    power_pellet(1125, 110),
-    power_pellet(75, 400),
-    power_pellet(1125, 400),
-]
-
-
-# ==========================================================
-# ROTAS
-# ==========================================================
-
-pacman_path = (
-    "M75 195 "
-    "H435 "
-    "V300 "
-    "H485 "
-    "V395 "
-    "H815 "
-    "V300 "
-    "H865 "
-    "V195 "
-    "H1125 "
-    "V395 "
-    "H815 "
-    "V320 "
-    "H385 "
-    "V395 "
-    "H75 "
-    "V195"
-)
-
-red_path = (
-    "M600 270 "
-    "H865 "
-    "V195 "
-    "H1125 "
-    "V395 "
-    "H815 "
-    "V320 "
-    "H600 "
-    "V300 "
-    "H385 "
-    "V195 "
-    "H75 "
-    "V395 "
-    "H385 "
-    "V270 "
-    "H600"
-)
-
-pink_path = (
-    "M600 270 "
-    "H385 "
-    "V195 "
-    "H75 "
-    "V395 "
-    "H385 "
-    "V320 "
-    "H600 "
-    "V395 "
-    "H815 "
-    "V300 "
-    "H1125 "
-    "V195 "
-    "H865 "
-    "V270 "
-    "H600"
-)
-
-cyan_path = (
-    "M570 270 "
-    "H385 "
-    "V300 "
-    "H75 "
-    "V195 "
-    "H385 "
-    "V270 "
-    "H570 "
-    "V395 "
-    "H815 "
-    "V300 "
-    "H1125 "
-    "V195 "
-    "H865 "
-    "V270 "
-    "H570"
-)
-
-orange_path = (
-    "M630 270 "
-    "H865 "
-    "V300 "
-    "H1125 "
-    "V195 "
-    "H865 "
-    "V270 "
-    "H630 "
-    "V395 "
-    "H385 "
-    "V300 "
-    "H75 "
-    "V195 "
-    "H385 "
-    "V270 "
-    "H630"
-)
-
-
-# ==========================================================
-# SVG
-# ==========================================================
-
-svg = f"""
-<svg
-    width="{WIDTH}"
-    height="{HEIGHT}"
-    viewBox="0 0 {WIDTH} {HEIGHT}"
-    xmlns="http://www.w3.org/2000/svg"
->
-
-    <defs>
-
-        <filter
-            id="blueGlow"
-            x="-20%"
-            y="-20%"
-            width="140%"
-            height="140%"
-        >
-            <feGaussianBlur
-                stdDeviation="1.8"
-                result="blur"
-            />
-            <feMerge>
-                <feMergeNode in="blur"/>
-                <feMergeNode in="SourceGraphic"/>
-            </feMerge>
-        </filter>
-
-        <filter
-            id="yellowGlow"
-            x="-30%"
-            y="-30%"
-            width="160%"
-            height="160%"
-        >
-            <feGaussianBlur
-                stdDeviation="2.2"
-                result="blur"
-            />
-            <feMerge>
-                <feMergeNode in="blur"/>
-                <feMergeNode in="SourceGraphic"/>
-            </feMerge>
-        </filter>
-
-    </defs>
-
-
-    <!-- FUNDO -->
-    <rect
-        width="{WIDTH}"
-        height="{HEIGHT}"
-        rx="18"
-        fill="#05070c"
-    />
-
-
-    <!-- SCORE -->
-    <text
-        x="55"
-        y="55"
-        fill="#ffffff"
-        font-family="Courier New, monospace"
-        font-size="23"
-        font-weight="700"
-    >
-        SCORE
-    </text>
-
-    <text
-        x="145"
-        y="55"
-        fill="#ffe500"
-        font-family="Courier New, monospace"
-        font-size="23"
-        font-weight="700"
-    >
-        007950
-    </text>
-
-
-    <!-- HIGH SCORE -->
-    <text
-        x="465"
-        y="55"
-        fill="#ffffff"
-        font-family="Courier New, monospace"
-        font-size="19"
-        font-weight="700"
-    >
-        HIGH SCORE
-    </text>
-
-    <text
-        x="610"
-        y="55"
-        fill="#ffe500"
-        font-family="Courier New, monospace"
-        font-size="19"
-        font-weight="700"
-    >
-        012340
-    </text>
-
-
-    <!-- LIVES -->
-    <text
-        x="940"
-        y="55"
-        fill="#ffffff"
-        font-family="Courier New, monospace"
-        font-size="22"
-        font-weight="700"
-    >
-        LIVES
-    </text>
-
-
-    <!-- 3 VIDAS -->
-    <g fill="#ffe329">
-
-        <path
-            d="
-            M1045 49
-            L1030 39
-            A17 17 0 1 0 1030 59
-            Z
-            "
-        />
-
-        <path
-            d="
-            M1082 49
-            L1067 39
-            A17 17 0 1 0 1067 59
-            Z
-            "
-        />
-
-        <path
-            d="
-            M1119 49
-            L1104 39
-            A17 17 0 1 0 1104 59
-            Z
-            "
-        />
-
-    </g>
-
-
-    <!-- LABIRINTO -->
-    <g filter="url(#blueGlow)">
-        {maze}
-    </g>
-
-
-    <!-- PONTOS -->
-    <g>
-        {''.join(pellets)}
-        {''.join(powers)}
-    </g>
-
-
-    <!-- READY -->
-    <text
-        x="558"
-        y="220"
-        fill="#ffe500"
-        font-family="Courier New, monospace"
-        font-size="18"
-        font-weight="700"
-    >
-        READY!
-
-        <animate
-            attributeName="opacity"
-            values="1;1;0;0"
-            keyTimes="0;0.05;0.12;1"
-            dur="{PACMAN_TIME}s"
-            repeatCount="indefinite"
-        />
-    </text>
-
-
-    <!-- FANTASMAS -->
-    {ghost("#ff3131", red_path, 15.4, 0)}
-    {ghost("#ff83dc", pink_path, 17.1, -4)}
-    {ghost("#28d9ff", cyan_path, 18.7, -8)}
-    {ghost("#ff9d2e", orange_path, 16.2, -11)}
-
-
-    <!-- PAC-MAN -->
-    <g filter="url(#yellowGlow)">
-
-        <animateMotion
-            dur="{PACMAN_TIME}s"
-            repeatCount="indefinite"
-            rotate="auto"
-            path="{pacman_path}"
-        />
-
-        <g>
-
-            <path
-                fill="#ffe329"
-                d="
-                M0 0
-                L16 -12
-                A20 20 0 1 0 16 12
-                Z
-                "
-            >
-
-                <animate
-                    attributeName="d"
-                    values="
-                    M0 0 L16 -12 A20 20 0 1 0 16 12 Z;
-                    M0 0 L19.9 -2 A20 20 0 1 0 19.9 2 Z;
-                    M0 0 L16 -12 A20 20 0 1 0 16 12 Z
-                    "
-                    dur="0.22s"
-                    repeatCount="indefinite"
-                />
-
-            </path>
-
-            <circle
-                cx="4"
-                cy="-9"
-                r="2.5"
-                fill="#05070c"
-            />
-
-        </g>
-
-    </g>
-
-</svg>
+    lives = "".join(
+        f'<path transform="translate({x} 42) scale(.65)" '
+        'd="M0,0 L8.8,-6.6 A11,11 0 1 0 8.8,6.6 Z"/>'
+        for x in (1060, 1084, 1108)
+    )
+    svg = f"""<svg xmlns="{NS}" width="{WIDTH}" height="{HEIGHT}"
+      viewBox="0 0 {WIDTH} {HEIGHT}" role="img" aria-labelledby="title description">
+      <title id="title">Pac-Man</title>
+      <desc id="description">Pac-Man e quatro fantasmas percorrem um labirinto
+      simetrico. Todos os movimentos respeitam as paredes e os corredores.</desc>
+      <rect width="{WIDTH}" height="{HEIGHT}" rx="18" fill="{BACKGROUND}"/>
+      <g font-family="Courier New,monospace" font-weight="700" font-size="19">
+        <text x="75" y="48" fill="white">SCORE <tspan fill="{YELLOW}">007950</tspan></text>
+        <text x="470" y="48" fill="white">HIGH SCORE <tspan fill="{YELLOW}">012340</tspan></text>
+        <text x="965" y="48" fill="white">LIVES</text>
+      </g>
+      <g fill="{YELLOW}">{lives}</g>
+      <g id="maze" fill="none" stroke="{BLUE}" stroke-width="{WALL_STROKE}"
+         stroke-linecap="round" stroke-linejoin="round">{walls}</g>
+      <line id="ghost-door" x1="{gate_x - 12:g}" x2="{gate_x + 12:g}"
+         y1="{gate_y:g}" y2="{gate_y:g}" stroke="#ff91dd" stroke-width="3"/>
+      <g id="pellets">{"".join(pellets)}</g>
+      {ghosts}
+      <g id="pacman" data-character="pacman">
+        {motion(pac_route, duration, rotate=True)}
+        <path fill="{YELLOW}" d="M0,0 L8.8,-6.6 A11,11 0 1 0 8.8,6.6 Z">
+          <animate attributeName="d"
+            values="M0,0 L8.8,-6.6 A11,11 0 1 0 8.8,6.6 Z;
+                    M0,0 L10.95,-1 A11,11 0 1 0 10.95,1 Z;
+                    M0,0 L8.8,-6.6 A11,11 0 1 0 8.8,6.6 Z"
+            dur="0.2s" repeatCount="indefinite"/>
+        </path>
+        <circle cx="2.5" cy="-5.5" r="1.3" fill="{BACKGROUND}"/>
+      </g>
+    </svg>
 """
+    return svg, grid, routes, clearance
 
 
-# ==========================================================
-# SALVAR
-# ==========================================================
-
-Path("assets").mkdir(
-    parents=True,
-    exist_ok=True
-)
-
-Path(
-    "assets/pacman.svg"
-).write_text(
-    svg,
-    encoding="utf-8"
-)
-
-print("Pac-Man profile generated successfully.")
+if __name__ == "__main__":
+    svg, grid, routes, clearance = generate(int(os.environ.get("PACMAN_SEED", "2026")))
+    output = Path("assets/pacman.svg")
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(svg, encoding="utf-8")
+    print(f"Pac-Man gerado: {len(routes['pacman']) - 1} movimentos; "
+          f"folga minima do centro ate a parede: {clearance:g}px.")
