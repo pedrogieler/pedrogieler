@@ -25,27 +25,18 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-
       - name: Set up Python
         uses: actions/setup-python@v5
-
         with:
           python-version: "3.11"
-
 
       - name: Generate Pac-Man SVG
         run: python scripts/generate_pacman.py
 
-
       - name: Commit generated asset
         run: |
-
           git config user.name "github-actions[bot]"
-
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
           git add assets/pacman.svg
-
           git diff --cached --quiet || git commit -m "chore: update pacman profile asset"
-
           git push
