@@ -3,598 +3,486 @@ from pathlib import Path
 WIDTH = 1200
 HEIGHT = 470
 
-# Tempo de uma volta completa do Pac-Man
-PACMAN_DURATION = 16
+PACMAN_TIME = 20
 
 
-# ============================================================
-# FUNÇÕES AUXILIARES
-# ============================================================
-
-def wall(x, y, w, h, r=10):
+def pellet(x, y, delay=0):
     return f"""
-    <rect
-        x="{x}"
-        y="{y}"
-        width="{w}"
-        height="{h}"
-        rx="{r}"
-        fill="#05070c"
-        stroke="#1267ff"
-        stroke-width="7"
-    />
-
-    <rect
-        x="{x + 8}"
-        y="{y + 8}"
-        width="{w - 16}"
-        height="{h - 16}"
-        rx="{max(r - 4, 4)}"
-        fill="none"
-        stroke="#001b70"
-        stroke-width="2"
-    />
-    """
-
-
-def pellet(x, y, index=None):
-    if index is None:
-        return f"""
-        <circle
-            cx="{x}"
-            cy="{y}"
-            r="4"
-            fill="#ffe6a3"
-        />
-        """
-
-    # Faz os pontos desaparecerem aproximadamente
-    # na sequência em que o Pac-Man passa.
-    t = min(0.88, 0.07 + index * 0.023)
-
-    return f"""
-    <circle
-        cx="{x}"
-        cy="{y}"
-        r="4"
-        fill="#ffe6a3"
-    >
+    <circle cx="{x}" cy="{y}" r="3.3" fill="#ffe8a3">
         <animate
             attributeName="opacity"
             values="1;1;0;0;1"
-            keyTimes="0;{t:.3f};{min(t + 0.015, 0.93):.3f};0.96;1"
-            dur="{PACMAN_DURATION}s"
+            keyTimes="0;{delay:.3f};{min(delay + 0.015, 0.94):.3f};0.97;1"
+            dur="{PACMAN_TIME}s"
             repeatCount="indefinite"
         />
     </circle>
     """
+
+
+def static_pellet(x, y):
+    return f'<circle cx="{x}" cy="{y}" r="3.3" fill="#ffe8a3"/>'
 
 
 def power_pellet(x, y):
     return f"""
-    <circle
-        cx="{x}"
-        cy="{y}"
-        r="10"
-        fill="#fff1c4"
-    >
-        <animate
-            attributeName="r"
-            values="8;11;8"
-            dur="0.65s"
-            repeatCount="indefinite"
-        />
-
+    <circle cx="{x}" cy="{y}" r="9" fill="#fff2c7">
         <animate
             attributeName="opacity"
-            values="1;0.55;1"
-            dur="0.65s"
+            values="1;0.45;1"
+            dur="0.7s"
+            repeatCount="indefinite"
+        />
+        <animate
+            attributeName="r"
+            values="8;10;8"
+            dur="0.7s"
             repeatCount="indefinite"
         />
     </circle>
     """
 
 
-def ghost(color, route, duration, begin):
+def ghost(color, path, duration, begin):
     return f"""
     <g>
-
         <animateMotion
             dur="{duration}s"
             begin="{begin}s"
             repeatCount="indefinite"
             rotate="auto"
-            path="{route}"
+            path="{path}"
         />
 
-        <g transform="translate(-18,-18)">
-
+        <g transform="translate(-16,-16)">
             <path
                 d="
-                    M2 34
-                    V18
-
-                    C2 8 9 2 18 2
-                    C27 2 34 8 34 18
-
-                    V34
-
-                    L29 29
-                    L24 34
-                    L18 29
-                    L12 34
-                    L7 29
-                    Z
+                M2 31
+                V16
+                C2 7 8 2 16 2
+                C24 2 30 7 30 16
+                V31
+                L26 27
+                L22 31
+                L17 27
+                L12 31
+                L7 27
+                L2 31 Z
                 "
                 fill="{color}"
             />
 
-            <!-- OLHOS -->
+            <ellipse cx="11" cy="14" rx="4.5" ry="5.5" fill="white"/>
+            <ellipse cx="22" cy="14" rx="4.5" ry="5.5" fill="white"/>
 
-            <ellipse
-                cx="13"
-                cy="15"
-                rx="5"
-                ry="6"
-                fill="#ffffff"
-            />
-
-            <ellipse
-                cx="25"
-                cy="15"
-                rx="5"
-                ry="6"
-                fill="#ffffff"
-            />
-
-            <circle
-                cx="15"
-                cy="16"
-                r="2.5"
-                fill="#163c96"
-            />
-
-            <circle
-                cx="27"
-                cy="16"
-                r="2.5"
-                fill="#163c96"
-            />
-
+            <circle cx="13" cy="15" r="2.2" fill="#164cc9"/>
+            <circle cx="24" cy="15" r="2.2" fill="#164cc9"/>
         </g>
-
     </g>
     """
 
 
-# ============================================================
+# ==========================================================
 # LABIRINTO
-# ============================================================
+# ==========================================================
 
-walls = [
-
-    # Borda externa
-    wall(
-        55,
-        95,
-        1090,
-        320,
-        14
-    ),
-
-    # Linha superior
-    wall(
-        130,
-        120,
-        180,
-        48
-    ),
-
-    wall(
-        385,
-        120,
-        175,
-        48
-    ),
-
-    wall(
-        640,
-        120,
-        175,
-        48
-    ),
-
-    wall(
-        890,
-        120,
-        180,
-        48
-    ),
-
-    # Meio esquerdo
-    wall(
-        130,
-        225,
-        180,
-        50
-    ),
-
-    # Meio direito
-    wall(
-        890,
-        225,
-        180,
-        50
-    ),
-
-    # Verticais esquerda
-    wall(
-        345,
-        205,
-        45,
-        105
-    ),
-
-    # Verticais direita
-    wall(
-        810,
-        205,
-        45,
-        105
-    ),
-
-    # Inferior esquerda
-    wall(
-        130,
-        325,
-        180,
-        48
-    ),
-
-    # Inferior centro esquerda
-    wall(
-        405,
-        330,
-        145,
-        40
-    ),
-
-    # Inferior centro direita
-    wall(
-        650,
-        330,
-        145,
-        40
-    ),
-
-    # Inferior direita
-    wall(
-        890,
-        325,
-        180,
-        48
-    ),
-]
-
-
-# ============================================================
-# CASA DOS FANTASMAS
-# ============================================================
-
-ghost_house = """
-<path
-    d="
-        M505 305
-        V245
-
-        Q505 230 520 230
-
-        H565
-
-        M635 230
-
-        H680
-
-        Q695 230 695 245
-
-        V305
-        Z
-    "
-    fill="#05070c"
-    stroke="#1267ff"
+maze = r"""
+<g
+    fill="none"
+    stroke="#0878ff"
     stroke-width="7"
     stroke-linecap="round"
     stroke-linejoin="round"
-/>
+>
 
+    <!-- BORDA EXTERNA -->
+    <rect x="45" y="90" width="1110" height="330" rx="16"/>
+
+    <!-- TOPO ESQUERDO -->
+    <path d="
+        M115 130 H300
+        V175
+        H115
+        Z
+    "/>
+
+    <!-- TOPO CENTRO ESQUERDO -->
+    <path d="
+        M380 130 H535
+        V175
+        H380
+        Z
+    "/>
+
+    <!-- TOPO CENTRO DIREITO -->
+    <path d="
+        M665 130 H820
+        V175
+        H665
+        Z
+    "/>
+
+    <!-- TOPO DIREITO -->
+    <path d="
+        M900 130 H1085
+        V175
+        H900
+        Z
+    "/>
+
+    <!-- BLOCO MEIO ESQUERDO -->
+    <path d="
+        M115 230 H300
+        V275
+        H115
+        Z
+    "/>
+
+    <!-- BLOCO MEIO DIREITO -->
+    <path d="
+        M900 230 H1085
+        V275
+        H900
+        Z
+    "/>
+
+    <!-- VERTICAL ESQUERDA -->
+    <path d="
+        M340 205
+        V305
+        H385
+        V205
+    "/>
+
+    <!-- VERTICAL DIREITA -->
+    <path d="
+        M815 205
+        V305
+        H860
+        V205
+    "/>
+
+    <!-- CENTRO SUPERIOR -->
+    <path d="
+        M455 205
+        H535
+        V225
+    "/>
+
+    <path d="
+        M665 205
+        H745
+        V225
+    "/>
+
+    <!-- CASA DOS FANTASMAS -->
+    <path d="
+        M505 310
+        V250
+        Q505 235 520 235
+        H560
+    "/>
+
+    <path d="
+        M640 235
+        H680
+        Q695 235 695 250
+        V310
+    "/>
+
+    <path d="
+        M505 310
+        H695
+    "/>
+
+    <!-- INFERIOR ESQUERDO -->
+    <path d="
+        M115 330
+        H300
+        V375
+        H115
+        Z
+    "/>
+
+    <!-- INFERIOR CENTRAL ESQUERDO -->
+    <path d="
+        M385 340
+        H520
+        V375
+        H385
+        Z
+    "/>
+
+    <!-- INFERIOR CENTRAL DIREITO -->
+    <path d="
+        M680 340
+        H815
+        V375
+        H680
+        Z
+    "/>
+
+    <!-- INFERIOR DIREITO -->
+    <path d="
+        M900 330
+        H1085
+        V375
+        H900
+        Z
+    "/>
+
+</g>
+
+<!-- PORTA ROSA DA CASA -->
 <line
-    x1="565"
-    y1="230"
-    x2="635"
-    y2="230"
-    stroke="#ff70d5"
+    x1="560"
+    y1="235"
+    x2="640"
+    y2="235"
+    stroke="#ff76d9"
     stroke-width="7"
     stroke-linecap="round"
 />
 """
 
 
-# ============================================================
-# PONTOS
-# ============================================================
+# ==========================================================
+# PELLETS
+# ==========================================================
 
-route_pellets = [
+route_points = [
+    (75, 195),
+    (115, 195),
+    (155, 195),
+    (195, 195),
+    (235, 195),
+    (275, 195),
+    (315, 195),
+    (355, 195),
+    (395, 195),
+    (435, 195),
+    (475, 195),
+    (515, 195),
+    (555, 195),
+    (595, 195),
+    (635, 195),
+    (675, 195),
+    (715, 195),
+    (755, 195),
+    (795, 195),
+    (835, 195),
+    (875, 195),
+    (915, 195),
+    (955, 195),
+    (995, 195),
+    (1035, 195),
+    (1075, 195),
+    (1125, 195),
 
-    (90, 190),
-    (125, 190),
-    (160, 190),
-    (195, 190),
-    (230, 190),
-    (265, 190),
-    (300, 190),
-    (335, 190),
-    (370, 190),
+    (1125, 235),
+    (1125, 275),
+    (1125, 315),
+    (1125, 355),
+    (1125, 395),
 
-    (410, 190),
-    (450, 190),
-    (490, 190),
-    (530, 190),
-    (570, 190),
+    (1085, 395),
+    (1045, 395),
+    (1005, 395),
+    (965, 395),
+    (925, 395),
+    (885, 395),
+    (845, 395),
+    (805, 395),
+    (765, 395),
+    (725, 395),
+    (685, 395),
+    (645, 395),
+    (605, 395),
+    (565, 395),
+    (525, 395),
+    (485, 395),
+    (445, 395),
+    (405, 395),
+    (365, 395),
+    (325, 395),
+    (285, 395),
+    (245, 395),
+    (205, 395),
+    (165, 395),
+    (125, 395),
+    (75, 395),
 
-    (630, 190),
-    (670, 190),
-    (710, 190),
-    (750, 190),
-    (790, 190),
-
-    (830, 190),
-    (870, 190),
-    (910, 190),
-    (950, 190),
-    (990, 190),
-    (1030, 190),
-    (1070, 190),
-    (1110, 190),
-
-    (1110, 230),
-    (1110, 270),
-    (1110, 310),
-    (1110, 350),
-    (1110, 390),
-
-    (1070, 390),
-    (1030, 390),
-    (990, 390),
-    (950, 390),
-    (910, 390),
-    (870, 390),
-    (830, 390),
-
-    (790, 390),
-    (750, 390),
-    (710, 390),
-    (670, 390),
-    (630, 390),
-    (590, 390),
-    (550, 390),
-    (510, 390),
-    (470, 390),
-    (430, 390),
-    (390, 390),
-    (350, 390),
-
-    (310, 390),
-    (270, 390),
-    (230, 390),
-    (190, 390),
-    (150, 390),
-    (110, 390),
-
-    (90, 350),
-    (90, 310),
-    (90, 270),
-    (90, 230),
+    (75, 355),
+    (75, 315),
+    (75, 275),
+    (75, 235),
 ]
-
 
 pellets = []
 
-for index, (x, y) in enumerate(route_pellets):
+total = len(route_points)
+
+for i, (x, y) in enumerate(route_points):
+    delay = 0.05 + (i / total) * 0.82
     pellets.append(
-        pellet(
-            x,
-            y,
-            index
-        )
+        pellet(x, y, delay)
     )
 
 
-# Pontos internos que não precisam desaparecer
-static_pellets = [
+static_points = [
+    (75, 115),
+    (75, 150),
 
-    (90, 120),
-    (90, 150),
+    (1125, 115),
+    (1125, 150),
 
-    (1110, 120),
-    (1110, 150),
+    (325, 115),
+    (350, 115),
 
-    (335, 125),
-    (360, 125),
+    (850, 115),
+    (875, 115),
 
-    (840, 125),
-    (865, 125),
+    (325, 320),
+    (350, 320),
 
-    (335, 340),
-    (360, 340),
-
-    (840, 340),
-    (865, 340),
+    (850, 320),
+    (875, 320),
 
     (405, 215),
-    (445, 215),
-    (485, 215),
+    (440, 215),
+    (475, 215),
 
-    (715, 215),
-    (755, 215),
+    (725, 215),
+    (760, 215),
     (795, 215),
 
-    (410, 295),
-    (450, 295),
+    (405, 300),
+    (445, 300),
+    (485, 300),
 
-    (750, 295),
-    (790, 295),
+    (715, 300),
+    (755, 300),
+    (795, 300),
 ]
 
-
-for x, y in static_pellets:
+for x, y in static_points:
     pellets.append(
-        pellet(
-            x,
-            y
-        )
+        static_pellet(x, y)
     )
 
 
-# ============================================================
-# POWER PELLETS
-# ============================================================
-
-power_pellets = [
-
-    power_pellet(
-        90,
-        110
-    ),
-
-    power_pellet(
-        1110,
-        110
-    ),
-
-    power_pellet(
-        90,
-        400
-    ),
-
-    power_pellet(
-        1110,
-        400
-    ),
+powers = [
+    power_pellet(75, 110),
+    power_pellet(1125, 110),
+    power_pellet(75, 400),
+    power_pellet(1125, 400),
 ]
 
 
-# ============================================================
-# ROTA DO PAC-MAN
-# ============================================================
+# ==========================================================
+# ROTAS
+# ==========================================================
 
-pac_route = (
-    "M90 190 "
-    "H390 "
-    "V295 "
-    "H455 "
-    "V390 "
-    "H810 "
-    "V295 "
-    "H855 "
-    "V190 "
-    "H1110 "
-    "V390 "
-    "H810 "
+pacman_path = (
+    "M75 195 "
+    "H435 "
+    "V300 "
+    "H485 "
+    "V395 "
+    "H815 "
+    "V300 "
+    "H865 "
+    "V195 "
+    "H1125 "
+    "V395 "
+    "H815 "
     "V320 "
-    "H390 "
-    "V390 "
-    "H90 "
-    "V190"
+    "H385 "
+    "V395 "
+    "H75 "
+    "V195"
 )
 
-
-# ============================================================
-# ROTAS DOS FANTASMAS
-# ============================================================
-
-red_route = (
-    "M600 260 "
-    "H855 "
-    "V190 "
-    "H1110 "
-    "V390 "
-    "H810 "
+red_path = (
+    "M600 270 "
+    "H865 "
+    "V195 "
+    "H1125 "
+    "V395 "
+    "H815 "
     "V320 "
     "H600 "
-    "V295 "
-    "H390 "
-    "V190 "
-    "H90 "
-    "V390 "
-    "H390 "
-    "V260 "
+    "V300 "
+    "H385 "
+    "V195 "
+    "H75 "
+    "V395 "
+    "H385 "
+    "V270 "
     "H600"
 )
 
-
-pink_route = (
-    "M600 260 "
-    "H390 "
-    "V190 "
-    "H90 "
-    "V390 "
-    "H390 "
+pink_path = (
+    "M600 270 "
+    "H385 "
+    "V195 "
+    "H75 "
+    "V395 "
+    "H385 "
     "V320 "
     "H600 "
-    "V390 "
-    "H810 "
-    "V295 "
-    "H1110 "
-    "V190 "
-    "H855 "
-    "V260 "
+    "V395 "
+    "H815 "
+    "V300 "
+    "H1125 "
+    "V195 "
+    "H865 "
+    "V270 "
     "H600"
 )
 
-
-cyan_route = (
-    "M570 260 "
-    "H390 "
-    "V295 "
-    "H90 "
-    "V190 "
-    "H390 "
-    "V260 "
+cyan_path = (
+    "M570 270 "
+    "H385 "
+    "V300 "
+    "H75 "
+    "V195 "
+    "H385 "
+    "V270 "
     "H570 "
-    "V390 "
-    "H810 "
-    "V295 "
-    "H1110 "
-    "V190 "
-    "H855 "
-    "V260 "
+    "V395 "
+    "H815 "
+    "V300 "
+    "H1125 "
+    "V195 "
+    "H865 "
+    "V270 "
     "H570"
 )
 
-
-orange_route = (
-    "M630 260 "
-    "H855 "
-    "V295 "
-    "H1110 "
-    "V190 "
-    "H855 "
-    "V260 "
+orange_path = (
+    "M630 270 "
+    "H865 "
+    "V300 "
+    "H1125 "
+    "V195 "
+    "H865 "
+    "V270 "
     "H630 "
-    "V390 "
-    "H390 "
-    "V295 "
-    "H90 "
-    "V190 "
-    "H390 "
-    "V260 "
+    "V395 "
+    "H385 "
+    "V300 "
+    "H75 "
+    "V195 "
+    "H385 "
+    "V270 "
     "H630"
 )
 
 
-# ============================================================
-# SVG FINAL
-# ============================================================
+# ==========================================================
+# SVG
+# ==========================================================
 
 svg = f"""
 <svg
@@ -608,31 +496,20 @@ svg = f"""
 
         <filter
             id="blueGlow"
-            x="-30%"
-            y="-30%"
-            width="160%"
-            height="160%"
+            x="-20%"
+            y="-20%"
+            width="140%"
+            height="140%"
         >
-
             <feGaussianBlur
-                stdDeviation="2"
+                stdDeviation="1.8"
                 result="blur"
             />
-
             <feMerge>
-
-                <feMergeNode
-                    in="blur"
-                />
-
-                <feMergeNode
-                    in="SourceGraphic"
-                />
-
+                <feMergeNode in="blur"/>
+                <feMergeNode in="SourceGraphic"/>
             </feMerge>
-
         </filter>
-
 
         <filter
             id="yellowGlow"
@@ -641,258 +518,191 @@ svg = f"""
             width="160%"
             height="160%"
         >
-
             <feGaussianBlur
-                stdDeviation="2.5"
+                stdDeviation="2.2"
                 result="blur"
             />
-
             <feMerge>
-
-                <feMergeNode
-                    in="blur"
-                />
-
-                <feMergeNode
-                    in="SourceGraphic"
-                />
-
+                <feMergeNode in="blur"/>
+                <feMergeNode in="SourceGraphic"/>
             </feMerge>
-
         </filter>
 
     </defs>
 
 
     <!-- FUNDO -->
-
     <rect
-        width="1200"
-        height="470"
-        rx="20"
+        width="{WIDTH}"
+        height="{HEIGHT}"
+        rx="18"
         fill="#05070c"
     />
 
 
-    <!-- ================================================= -->
     <!-- SCORE -->
-    <!-- ================================================= -->
-
     <text
-        x="65"
+        x="55"
         y="55"
         fill="#ffffff"
-        font-family="'Courier New', monospace"
-        font-size="24"
+        font-family="Courier New, monospace"
+        font-size="23"
         font-weight="700"
     >
         SCORE
     </text>
 
-
     <text
-        x="165"
+        x="145"
         y="55"
         fill="#ffe500"
-        font-family="'Courier New', monospace"
-        font-size="24"
+        font-family="Courier New, monospace"
+        font-size="23"
         font-weight="700"
     >
         007950
     </text>
 
 
-    <!-- ================================================= -->
     <!-- HIGH SCORE -->
-    <!-- ================================================= -->
-
     <text
         x="465"
         y="55"
         fill="#ffffff"
-        font-family="'Courier New', monospace"
-        font-size="20"
+        font-family="Courier New, monospace"
+        font-size="19"
         font-weight="700"
     >
         HIGH SCORE
     </text>
 
-
     <text
         x="610"
         y="55"
         fill="#ffe500"
-        font-family="'Courier New', monospace"
-        font-size="20"
+        font-family="Courier New, monospace"
+        font-size="19"
         font-weight="700"
     >
         012340
     </text>
 
 
-    <!-- ================================================= -->
-    <!-- VIDAS -->
-    <!-- ================================================= -->
-
+    <!-- LIVES -->
     <text
         x="940"
         y="55"
         fill="#ffffff"
-        font-family="'Courier New', monospace"
-        font-size="24"
+        font-family="Courier New, monospace"
+        font-size="22"
         font-weight="700"
     >
         LIVES
     </text>
 
 
-    <!-- Vida 1 -->
+    <!-- 3 VIDAS -->
+    <g fill="#ffe329">
 
-    <path
-        d="
-            M1050 50
-            L1034 39
-            A18 18 0 1 0 1034 61
+        <path
+            d="
+            M1045 49
+            L1030 39
+            A17 17 0 1 0 1030 59
             Z
-        "
-        fill="#ffe329"
-    />
+            "
+        />
 
-
-    <!-- Vida 2 -->
-
-    <path
-        d="
-            M1090 50
-            L1074 39
-            A18 18 0 1 0 1074 61
+        <path
+            d="
+            M1082 49
+            L1067 39
+            A17 17 0 1 0 1067 59
             Z
-        "
-        fill="#ffe329"
-    />
+            "
+        />
 
-
-    <!-- Vida 3 -->
-
-    <path
-        d="
-            M1130 50
-            L1114 39
-            A18 18 0 1 0 1114 61
+        <path
+            d="
+            M1119 49
+            L1104 39
+            A17 17 0 1 0 1104 59
             Z
-        "
-        fill="#ffe329"
-    />
+            "
+        />
+
+    </g>
 
 
-    <!-- ================================================= -->
     <!-- LABIRINTO -->
-    <!-- ================================================= -->
-
     <g filter="url(#blueGlow)">
-
-        {''.join(walls)}
-
-        {ghost_house}
-
+        {maze}
     </g>
 
 
-    <!-- ================================================= -->
-    <!-- PELLETS -->
-    <!-- ================================================= -->
-
+    <!-- PONTOS -->
     <g>
-
         {''.join(pellets)}
-
-        {''.join(power_pellets)}
-
+        {''.join(powers)}
     </g>
 
 
-    <!-- ================================================= -->
-    <!-- FANTASMA VERMELHO -->
-    <!-- ================================================= -->
+    <!-- READY -->
+    <text
+        x="558"
+        y="220"
+        fill="#ffe500"
+        font-family="Courier New, monospace"
+        font-size="18"
+        font-weight="700"
+    >
+        READY!
 
-    {ghost(
-        "#ff3131",
-        red_route,
-        13.4,
-        0
-    )}
-
-
-    <!-- ================================================= -->
-    <!-- FANTASMA ROSA -->
-    <!-- ================================================= -->
-
-    {ghost(
-        "#ff88dd",
-        pink_route,
-        15.2,
-        -3
-    )}
+        <animate
+            attributeName="opacity"
+            values="1;1;0;0"
+            keyTimes="0;0.05;0.12;1"
+            dur="{PACMAN_TIME}s"
+            repeatCount="indefinite"
+        />
+    </text>
 
 
-    <!-- ================================================= -->
-    <!-- FANTASMA AZUL -->
-    <!-- ================================================= -->
-
-    {ghost(
-        "#21d4fd",
-        cyan_route,
-        16.3,
-        -6
-    )}
+    <!-- FANTASMAS -->
+    {ghost("#ff3131", red_path, 15.4, 0)}
+    {ghost("#ff83dc", pink_path, 17.1, -4)}
+    {ghost("#28d9ff", cyan_path, 18.7, -8)}
+    {ghost("#ff9d2e", orange_path, 16.2, -11)}
 
 
-    <!-- ================================================= -->
-    <!-- FANTASMA LARANJA -->
-    <!-- ================================================= -->
-
-    {ghost(
-        "#ff9d2e",
-        orange_route,
-        14.6,
-        -8
-    )}
-
-
-    <!-- ================================================= -->
     <!-- PAC-MAN -->
-    <!-- ================================================= -->
-
     <g filter="url(#yellowGlow)">
 
         <animateMotion
-            dur="{PACMAN_DURATION}s"
+            dur="{PACMAN_TIME}s"
             repeatCount="indefinite"
             rotate="auto"
-            path="{pac_route}"
+            path="{pacman_path}"
         />
-
 
         <g>
 
             <path
                 fill="#ffe329"
                 d="
-                    M20 0
-                    L-7 -16
-                    A20 20 0 1 0 -7 16
-                    Z
+                M20 0
+                L-7 -16
+                A20 20 0 1 0 -7 16
+                Z
                 "
             >
-
-                <!-- BOCA ABRINDO E FECHANDO -->
 
                 <animate
                     attributeName="d"
                     values="
-                        M20 0 L-7 -16 A20 20 0 1 0 -7 16 Z;
-                        M20 0 L-16 -5 A20 20 0 1 0 -16 5 Z;
-                        M20 0 L-7 -16 A20 20 0 1 0 -7 16 Z
+                    M20 0 L-7 -16 A20 20 0 1 0 -7 16 Z;
+                    M20 0 L-16 -4 A20 20 0 1 0 -16 4 Z;
+                    M20 0 L-7 -16 A20 20 0 1 0 -7 16 Z
                     "
                     dur="0.22s"
                     repeatCount="indefinite"
@@ -900,53 +710,24 @@ svg = f"""
 
             </path>
 
-
-            <!-- OLHO -->
-
             <circle
                 cx="4"
                 cy="-9"
                 r="2.5"
-                fill="#101010"
+                fill="#05070c"
             />
 
         </g>
 
     </g>
 
-
-    <!-- ================================================= -->
-    <!-- READY -->
-    <!-- ================================================= -->
-
-    <text
-        x="555"
-        y="215"
-        fill="#ffe500"
-        font-family="'Courier New', monospace"
-        font-size="19"
-        font-weight="700"
-    >
-
-        READY!
-
-        <animate
-            attributeName="opacity"
-            values="1;1;0;0"
-            keyTimes="0;0.045;0.10;1"
-            dur="{PACMAN_DURATION}s"
-            repeatCount="indefinite"
-        />
-
-    </text>
-
 </svg>
 """
 
 
-# ============================================================
-# SALVAR O SVG
-# ============================================================
+# ==========================================================
+# SALVAR
+# ==========================================================
 
 Path("assets").mkdir(
     parents=True,
@@ -960,6 +741,4 @@ Path(
     encoding="utf-8"
 )
 
-print(
-    "assets/pacman.svg generated successfully."
-)
+print("Pac-Man profile generated successfully.")
