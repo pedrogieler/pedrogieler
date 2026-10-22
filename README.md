@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./assets/pacman.svg" alt="Pac-Man Profile Banner" width="900" />
+  <img src="./assets/pacman.svg" alt="Pac-Man Profile" width="900" />
 </p>
 
 <p align="center">
