@@ -690,9 +690,9 @@ svg = f"""
             <path
                 fill="#ffe329"
                 d="
-                M20 0
-                L-7 -16
-                A20 20 0 1 0 -7 16
+                M0 0
+                L16 -12
+                A20 20 0 1 0 16 12
                 Z
                 "
             >
@@ -700,9 +700,9 @@ svg = f"""
                 <animate
                     attributeName="d"
                     values="
-                    M20 0 L-7 -16 A20 20 0 1 0 -7 16 Z;
-                    M20 0 L-16 -4 A20 20 0 1 0 -16 4 Z;
-                    M20 0 L-7 -16 A20 20 0 1 0 -7 16 Z
+                    M0 0 L16 -12 A20 20 0 1 0 16 12 Z;
+                    M0 0 L19.9 -2 A20 20 0 1 0 19.9 2 Z;
+                    M0 0 L16 -12 A20 20 0 1 0 16 12 Z
                     "
                     dur="0.22s"
                     repeatCount="indefinite"
