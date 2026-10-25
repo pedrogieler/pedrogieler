@@ -5,5 +5,6 @@
 </p>
 
 <p align="center">
-  <img src="./assets/pacman.svg" alt="Pac-Man Profile" width="900" />
+  <img src="https://raw.githubusercontent.com/pedrogieler/pacman-autoplay/main/assets/pacman.svg" alt="Pac-Man Profile" width="900" />
 </p>
+

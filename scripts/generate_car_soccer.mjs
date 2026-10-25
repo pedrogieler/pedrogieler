@@ -5,7 +5,7 @@ import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import vm from 'node:vm';
 
-const REVISION = '5cffc8a95df4fa5b2c4fe09ac15dd2cee7f30035';
+const REVISION = '826012a86ed75470bd702c2a6b55dcb1b46a2900';
 const SOURCE_URL = `https://raw.githubusercontent.com/pedrogieler/car-soccer-autoplay/${REVISION}/index.html`;
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const args = process.argv.slice(2);
@@ -36,8 +36,19 @@ else {
 const embedded = source.match(/<iframe\b[^>]*\bdata-srcdoc="([^"]*)"/i);
 if (embedded) source = decode(embedded[1]);
 const arena = source.match(/<svg\b[^>]*\bid="aq-arena"[\s\S]*?<\/svg>/i)?.[0];
-const script = [...source.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)]
+let script = [...source.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)]
   .find(match => match[1].includes('window.__aquadomeSoccerPreview='))?.[1];
+if (!script) {
+  const scriptPath = source.match(/<script\b[^>]*\bsrc=["']([^"']+)["'][^>]*><\/script>/i)?.[1];
+  if (scriptPath) {
+    if (sourcePath) script = await readFile(resolve(dirname(resolve(sourcePath)), scriptPath), 'utf8');
+    else {
+      const response = await fetch(new URL(scriptPath, SOURCE_URL));
+      if (!response.ok) throw new Error(`Game script: HTTP ${response.status}`);
+      script = await response.text();
+    }
+  }
+}
 if (!arena || !script) throw new Error('Published simulator markup was not found.');
 
 // This small document adapter records the renderer's output; no browser is used.
@@ -176,3 +187,4 @@ if (/<script\b|<foreignObject\b|\son\w+\s*=|(?:href|src)="https?:/i.test(svg)) t
 await mkdir(dirname(output), { recursive: true });
 await writeFile(output, svg);
 console.log(JSON.stringify({ output, bytes: Buffer.byteLength(svg), duration, fps: FPS, frames: frames.length, seed, scores: finalState.scores, stats: finalState.stats }));
+
